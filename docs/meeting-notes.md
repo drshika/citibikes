@@ -6,3 +6,6 @@
 ### 10/25/21
 - After presenting our datasets, we created a google form to vote on the top three datasets we would like to focus on. As not all of the algorithms proposed were suitable for the respective dataset, we intend to discuss afterwards what are some of the best algorithms for the selected dataset. 
 - Unicode character name relation to emoji, research on what the pattern is is needed.
+- 
+### 11/7/21
+- Decided on CitiBike Dataset, Algorithms, and Timeline
