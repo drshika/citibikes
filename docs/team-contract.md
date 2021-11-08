@@ -38,6 +38,6 @@ members.
 match, Final Destination, 3 stock no items. The winner will decide who was right and who
 was wrong (Might makes right).
 
-Signatures: drshika2, jyt3m, joannah2, meghanr6
+Signatures: drshika2, jyt3m, joannah2 , meghanr6
 
 Final Project Assignment Page: https://courses.engr.illinois.edu/cs225/fa2021/pages/final_project.html
