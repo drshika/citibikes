@@ -19,7 +19,7 @@
 
 ### 10/25/21
 **What We Planned**
-- Bring (1-2) proposed datasets to ideate around
+- Bring (1-2) more proposed datasets to ideate around
 - Figure out what algorithms we want to do and runtime for each
 - Finalize leading question, dataset and start thinking about timeline
 
@@ -38,3 +38,17 @@
 **Goals for Next Week**
 - Create a timeline for the rest of our project
 - Assign our first coding task
+
+### 11/7/21
+**What We Planned**
+- Create a timeline for the rest of our project
+- Assign our first coding tasks
+
+**What We Acomplished**
+- Decided on the CitiBike Dataset
+- Decided on which algorithms to do for the project
+- Decided on a timeline for the final project
+- Decided on coding tasks for the next two weeks
+
+**Goals for Next Week**
+- Work on the assigned coding tasks
