@@ -1,8 +1,23 @@
 #include "../project/catch/catch.hpp"
+#include "../Graph.h"
+#include "../Graph.cpp"
 
 #include <iostream>
 
-TEST_CASE("Test Test Case") {
-    std::cout << "testing..." << std::endl;
-    REQUIRE(1 == 1);
+/*
+ * Tests for Graph: 
+ *  - Insert Vertex
+ *  - Insert Edge
+ */
+TEST_CASE("Insert Vertex") {
+  Graph test;
+  test.addDataFromFile("data/April2020.csv");
+}
+
+TEST_CASE("Insert Edge") {
+  REQUIRE(1 == 1);
+}
+
+TEST_CASE("Missing Latitude/Longitude") {
+  REQUIRE(1 == 1);
 }
