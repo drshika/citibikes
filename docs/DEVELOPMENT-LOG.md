@@ -52,3 +52,23 @@
 
 **Goals for Next Week**
 - Work on the assigned coding tasks
+
+### 11/14/21
+**What We Planned**
+- Work on the assigned coding tasks
+
+**What We Acomplished**
+- Discussed progress on coding tasks and necessary timeline modifications
+
+**Goals for Next Week**
+- Work on the assigned coding tasks
+
+### 11/21/21
+**What We Planned**
+- Work on the assigned coding tasks
+
+**What We Acomplished**
+- Discussed progress on coding tasks and necessary timeline modifications
+
+**Goals for Next Week**
+- Work on the assigned coding tasks
