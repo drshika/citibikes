@@ -475,7 +475,7 @@ TEST_CASE("Self Loops", "[valgrind][graphImplementation][addEdge]") {
    REQUIRE((*(fourth_vertex->adjacent_edges_->front()) == expected_edge_c));
  }
 
-TEST_CASE("Repeated Edges", "[dataFromFile]") {
+TEST_CASE("Repeated Edges", "[valgrind][dataFromFile]") {
    Graph with_data;
    with_data.addDataFromFile("tests/test_data/repeating_edges.csv");
    // check correct amount of verticies and edges were created

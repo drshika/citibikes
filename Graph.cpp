@@ -172,13 +172,10 @@ void Graph::addDataFromFile(std::string file_path) {
     Station station_one = Station(start_station_id, start_station_latitude, start_station_longitude);
     Station station_two = Station(end_station_id, end_station_latitude, end_station_longitude);
 
-    // add station vertexes to the graph if they don't exist yet
-    if (vertexes_.find(start_station_id) == vertexes_.end()) {
-      insertVertex(station_one);
-    }
-    if (vertexes_.find(end_station_id) == vertexes_.end()) {
-      insertVertex(station_two);
-    }
+    // create vertexes (overlap accounted for in insert vertex)
+    insertVertex(station_one);
+    insertVertex(station_two);
+
     // add edge between the stations (overlap and self loop accounted for in insert edge)
     insertEdge(vertexes_[start_station_id], vertexes_[end_station_id]);
   }
