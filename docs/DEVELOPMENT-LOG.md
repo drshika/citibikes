@@ -69,6 +69,19 @@
 
 **What We Acomplished**
 - Discussed progress on coding tasks and necessary timeline modifications
+- Reading in Data from the CSV files complete
+- Codebase setup
+
+**Goals for Next Week**
+- Work on the assigned coding tasks
+
+### 11/28/21
+**What We Planned**
+- Work on the assigned coding tasks
+
+**What We Acomplished**
+- Adjacency List Implementation of the Graph complete
+- Testing for Adjacency List Implementation and Reading in Data Complete 
 
 **Goals for Next Week**
 - Work on the assigned coding tasks
