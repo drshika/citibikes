@@ -180,6 +180,20 @@ public:
    */
   std::list<Edge*> getEdgeList() const;
 
+  /**
+   * Determines if graph is connected
+   *
+   * @return true if the graph is connected, false otherwise
+   */
+  bool isConnected() const;
+
+  /**
+   * Determines if the graph is not Eulerian, or if the graph has a Eulerian path or cycle
+   *
+   * @return 0 if not Eulerian, 1 if has a Eulerian path, 2 if has a Eulerian cycle
+   */
+  int isEulerian() const; 
+
 private:
   /**
    * A map representing the verticies in the graph

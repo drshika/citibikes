@@ -180,3 +180,30 @@ void Graph::addDataFromFile(std::string file_path) {
     insertEdge(vertexes_[start_station_id], vertexes_[end_station_id]);
   }
 }
+
+bool Graph::isConnected() const {
+
+}
+
+int Graph::isEulerian() const {
+  // unconnected graph is not Eulerian
+  if (!isConnected) return 0;
+
+  // count number of  vertices with odd degree
+  int odd_count = 0; 
+  for (const VertexData* vertex : vertexes_) {
+    if (vertex.adjacent_edges_.size() % 2 == 1) {
+      ++odd_count;
+    }
+  }
+
+  // if odd count is more than 2, graph cannot be Eulerian
+  if (odd_count > 2) return 0;
+
+  // if odd count is 2, graph has Eulerian Path (is Semi-Eulerian)
+  if (odd_count == 2) return 1;
+
+  // odd count is 0, meaning graph has Eulerian Cycle
+  // odd count cannot be 1 for undirected graph
+  return 2;
+}

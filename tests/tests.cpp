@@ -503,3 +503,9 @@ TEST_CASE("Repeated Edges", "[valgrind][dataFromFile]") {
    REQUIRE(second_vertex->adjacent_edges_->size() == 1);
    REQUIRE((*(second_vertex->adjacent_edges_->front()) == expected_edge_a));
 }
+
+TEST_CASE("Non Eulerian", "[valgrind][checkEulerian]") {
+  Graph non_eulerian;
+  // non_eulerian.addDataFromFile("tests/test_data/non_eulerian.csv");
+
+}
