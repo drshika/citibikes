@@ -504,8 +504,155 @@ TEST_CASE("Repeated Edges", "[valgrind][dataFromFile]") {
    REQUIRE((*(second_vertex->adjacent_edges_->front()) == expected_edge_a));
 }
 
-TEST_CASE("Non Eulerian", "[valgrind][checkEulerian]") {
+TEST_CASE("Unconnected Zero Degree Non-Eulerian Graph",
+          "[valgrind][checkEulerian]") {
   Graph non_eulerian;
-  // non_eulerian.addDataFromFile("tests/test_data/non_eulerian.csv");
 
+  // REQUIRE_FALSE(non_eulerian.isConnected());
+  REQUIRE(non_eulerian.isEulerian() == 0);
+}
+
+TEST_CASE("Euler Path Plus Unconnected Vertex", "[valgrind][checkEulerian]") {
+  Graph::Station test_station_0 = Graph::Station(0, 0, 0);
+  Graph::Station test_station_1 = Graph::Station(1, 0, 0);
+  Graph::Station test_station_2 = Graph::Station(2, 0, 0);
+  Graph::Station test_station_3 = Graph::Station(3, 0, 0);
+  Graph::Station test_station_4 = Graph::Station(4, 0, 0);
+  Graph::Station test_station_5 = Graph::Station(5, 0, 0);
+
+  Graph non_eulerian;
+  non_eulerian.insertVertex(test_station_0);
+  non_eulerian.insertVertex(test_station_1);
+  non_eulerian.insertVertex(test_station_2);
+  non_eulerian.insertVertex(test_station_3);
+  non_eulerian.insertVertex(test_station_4);
+  non_eulerian.insertVertex(test_station_5);
+
+  Graph::VertexData *vertex_0 = non_eulerian.getVertex(0);
+  Graph::VertexData *vertex_1 = non_eulerian.getVertex(1);
+  Graph::VertexData *vertex_2 = non_eulerian.getVertex(2);
+  Graph::VertexData *vertex_3 = non_eulerian.getVertex(3);
+  Graph::VertexData *vertex_4 = non_eulerian.getVertex(4);
+
+  non_eulerian.insertEdge(vertex_0, vertex_1);
+  non_eulerian.insertEdge(vertex_2, vertex_1);
+  non_eulerian.insertEdge(vertex_0, vertex_3);
+  non_eulerian.insertEdge(vertex_3, vertex_4);
+  // vertex from test_station_5 not connected to graph
+
+  // REQUIRE_FALSE(non_eulerian.isConnected());
+  REQUIRE(non_eulerian.isEulerian() == 0);
+}
+
+TEST_CASE("One Eulerian Path", "[valgrind][checkEulerian]") {
+  Graph::Station test_station_0 = Graph::Station(0, 0, 0);
+  Graph::Station test_station_1 = Graph::Station(1, 0, 0);  
+  Graph::Station test_station_2 = Graph::Station(2, 0, 0);
+  Graph::Station test_station_3 = Graph::Station(3, 0, 0);
+  Graph::Station test_station_4 = Graph::Station(4, 0, 0);
+
+  Graph eulerian_path;
+  eulerian_path.insertVertex(test_station_0);
+  eulerian_path.insertVertex(test_station_1);
+  eulerian_path.insertVertex(test_station_2);
+  eulerian_path.insertVertex(test_station_3);
+  eulerian_path.insertVertex(test_station_4);
+
+  Graph::VertexData *vertex_0 = eulerian_path.getVertex(0);
+  Graph::VertexData *vertex_1 = eulerian_path.getVertex(1);
+  Graph::VertexData *vertex_2 = eulerian_path.getVertex(2);
+  Graph::VertexData *vertex_3 = eulerian_path.getVertex(3);
+  Graph::VertexData *vertex_4 = eulerian_path.getVertex(4);
+
+  eulerian_path.insertEdge(vertex_0, vertex_1);
+  eulerian_path.insertEdge(vertex_0, vertex_2);
+  eulerian_path.insertEdge(vertex_2, vertex_1);
+  eulerian_path.insertEdge(vertex_0, vertex_3);
+  eulerian_path.insertEdge(vertex_3, vertex_4);
+
+  // REQUIRE(eulerian_path.isConnected());
+  REQUIRE(eulerian_path.isEulerian() == 1);
+}
+
+TEST_CASE("Multiple Eulerian Paths", "[valgrind][checkEulerian]") {
+  Graph::Station test_station_0 = Graph::Station(0, 0, 0);
+  Graph::Station test_station_1 = Graph::Station(1, 0, 0);
+  Graph::Station test_station_2 = Graph::Station(2, 0, 0);
+  Graph::Station test_station_3 = Graph::Station(3, 0, 0);
+  Graph::Station test_station_4 = Graph::Station(4, 0, 0);
+
+  Graph eulerian_path;
+  eulerian_path.insertVertex(test_station_0);
+  eulerian_path.insertVertex(test_station_1);
+  eulerian_path.insertVertex(test_station_2);
+  eulerian_path.insertVertex(test_station_3);
+  eulerian_path.insertVertex(test_station_4);
+
+  Graph::VertexData *vertex_0 = eulerian_path.getVertex(0);
+  Graph::VertexData *vertex_1 = eulerian_path.getVertex(1);
+  Graph::VertexData *vertex_2 = eulerian_path.getVertex(2);
+  Graph::VertexData *vertex_3 = eulerian_path.getVertex(3);
+  Graph::VertexData *vertex_4 = eulerian_path.getVertex(4);
+
+  eulerian_path.insertEdge(vertex_1, vertex_0);
+  eulerian_path.insertEdge(vertex_0, vertex_2);
+  eulerian_path.insertEdge(vertex_3, vertex_1);
+  eulerian_path.insertEdge(vertex_0, vertex_3);
+  eulerian_path.insertEdge(vertex_0, vertex_4);
+
+  // REQUIRE(eulerian_path.isConnected());
+  REQUIRE(eulerian_path.isEulerian() == 1);
+}
+
+TEST_CASE("One Eulerian Cycle", "[valgrind][checkEulerian]") {
+  Graph::Station test_station_0 = Graph::Station(0, 0, 0);
+  Graph::Station test_station_1 = Graph::Station(1, 0, 0);
+  Graph::Station test_station_2 = Graph::Station(2, 0, 0);
+
+  Graph eulerian_cycle;
+  eulerian_cycle.insertVertex(test_station_0);
+  eulerian_cycle.insertVertex(test_station_1);
+  eulerian_cycle.insertVertex(test_station_2);
+
+  Graph::VertexData *vertex_0 = eulerian_cycle.getVertex(0);
+  Graph::VertexData *vertex_1 = eulerian_cycle.getVertex(1);
+  Graph::VertexData *vertex_2 = eulerian_cycle.getVertex(2);
+
+  eulerian_cycle.insertEdge(vertex_1, vertex_0);
+  eulerian_cycle.insertEdge(vertex_1, vertex_2);
+  eulerian_cycle.insertEdge(vertex_2, vertex_0);
+
+  // REQUIRE(eulerian_cycle.isConnected());
+  REQUIRE(eulerian_cycle.isEulerian() == 2);
+}
+
+TEST_CASE("Multiple Eulerian Cycles", "[valgrind][checkEulerian]") {
+  Graph::Station test_station_0 = Graph::Station(0, 0, 0);
+  Graph::Station test_station_1 = Graph::Station(1, 0, 0);
+  Graph::Station test_station_2 = Graph::Station(2, 0, 0);
+  Graph::Station test_station_3 = Graph::Station(3, 0, 0);
+  Graph::Station test_station_4 = Graph::Station(4, 0, 0);
+
+  Graph eulerian_cycle;
+  eulerian_cycle.insertVertex(test_station_0);
+  eulerian_cycle.insertVertex(test_station_1);
+  eulerian_cycle.insertVertex(test_station_2);
+  eulerian_cycle.insertVertex(test_station_3);
+  eulerian_cycle.insertVertex(test_station_4);
+
+  Graph::VertexData *vertex_0 = eulerian_cycle.getVertex(0);
+  Graph::VertexData *vertex_1 = eulerian_cycle.getVertex(1);
+  Graph::VertexData *vertex_2 = eulerian_cycle.getVertex(2);
+  Graph::VertexData *vertex_3 = eulerian_cycle.getVertex(3);
+  Graph::VertexData *vertex_4 = eulerian_cycle.getVertex(4);
+
+  eulerian_cycle.insertEdge(vertex_1, vertex_0);
+  eulerian_cycle.insertEdge(vertex_0, vertex_2);
+  eulerian_cycle.insertEdge(vertex_2, vertex_1);
+  eulerian_cycle.insertEdge(vertex_2, vertex_3);
+  eulerian_cycle.insertEdge(vertex_2, vertex_4);
+  eulerian_cycle.insertEdge(vertex_3, vertex_4);
+
+  // REQUIRE(eulerian_cycle.isConnected());
+  REQUIRE(eulerian_cycle.isEulerian() == 2);
 }
