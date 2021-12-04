@@ -159,7 +159,7 @@ public:
   void addDataFromFile(std::string file_path);
 
   /**
-   * Retrives the vertex represetnting the station with the given station id
+   * Retrives the vertex representing the station with the given station id
    *
    * @param station_id an int representing the id of the station to get the vertex of
    * @return a pointer to the vertex representing the station with the given id
@@ -192,7 +192,7 @@ public:
    *
    * @return 0 if not Eulerian, 1 if has a Eulerian path, 2 if has a Eulerian cycle
    */
-  int isEulerian() const; 
+  int isEulerian(); 
 
 private:
   /**

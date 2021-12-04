@@ -182,17 +182,18 @@ void Graph::addDataFromFile(std::string file_path) {
 }
 
 bool Graph::isConnected() const {
-
+  return true;
 }
 
-int Graph::isEulerian() const {
+int Graph::isEulerian() {
   // unconnected graph is not Eulerian
-  if (!isConnected) return 0;
+  if (!isConnected()) return 0;
 
   // count number of  vertices with odd degree
-  int odd_count = 0; 
-  for (const VertexData* vertex : vertexes_) {
-    if (vertex.adjacent_edges_.size() % 2 == 1) {
+  int odd_count = 0;
+  std::map<int, VertexData*>::iterator it;
+  for (it = vertexes_.begin(); it != vertexes_.end(); it++) {
+    if (it->second->adjacent_edges_->size() % 2 == 1) {
       ++odd_count;
     }
   }
