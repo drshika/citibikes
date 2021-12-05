@@ -18,6 +18,7 @@ DFS::DFS(Graph* graph, Graph::VertexData* first_vertex) {
   first_vertex->label = Graph::kVisited;
   stack_.push(first_vertex);
   index_in_map_ = 1;
+  num_connected_components = 1;
 }
 
 DFS::Iterator::Iterator(DFS* graph_dfs) {
@@ -69,6 +70,7 @@ void DFS::checkVerticiesAllExplored() {
       (*it).second->label = Graph::kVisited;
        stack_.push((*it).second);
        index_in_map_ += 1;
+       num_connected_components += 1;
        break;
     } 
     index_in_map_ += 1;
@@ -121,4 +123,8 @@ Graph::VertexData* DFS::peek() const {
 
 void DFS::pop() {
   stack_.pop();
+}
+
+size_t DFS::getNumConnectedComponents() {
+  return num_connected_components;
 }
