@@ -1,0 +1,8 @@
+"tripduration","starttime","stoptime","start station id","start station name","start station latitude","start station longitude","end station id","end station name","end station latitude","end station longitude","bikeid","usertype","birth year","gender"
+10, "2020-04-01 01:06:20.6300", "2020-04-01 01:06:20.6300", 0, "FirstStation", 0, 0, 1, "SecondStation", 1, 1, 789, "user", 2002, 1
+235, "2020-04-01 01:06:20.6300", "2020-04-01 01:06:20.6300", 1, "SecondStation", 1, 1, 2, "ThirdStation", 2, 2, 789, "user", 2002, 1
+10, "2020-04-01 01:06:20.6300", "2020-04-01 01:06:20.6300", 2, "ThirdStation", 2, 2, 3, "FourthStation", 3, 3, 789, "user", 2002, 1
+10, "2020-04-01 01:06:20.6300", "2020-04-01 01:06:20.6300", 3, "FourthStation", 3, 3, 4, "FifthStation", 4, 4, 789, "user", 2002, 1
+10, "2020-04-01 01:06:20.6300", "2020-04-01 01:06:20.6300", 4, "FifthStation", 4, 4, 0, "FirstStation", 0, 0, 789, "user", 2002, 1
+235, "2020-04-01 01:06:20.6300", "2020-04-01 01:06:20.6300", 0, "FirstStation", 0, 0, 3, "FourthStation", 3, 3, 789, "user", 2002, 1
+10, "2020-04-01 01:06:20.6300", "2020-04-01 01:06:20.6300", 1, "SecondStation", 1, 1, 4, "FifthStation", 4, 4, 789, "user", 2002, 1

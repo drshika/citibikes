@@ -7,17 +7,15 @@ Graph::~Graph() {
 Graph::Graph(const Graph& other) {
   copy(other);
 }
-/*
+
 Graph& Graph::operator=(const Graph& rhs) {
   // only destroy and copy if not the same graph
-  std::cout << "HELLO" << std::endl;
   if (this != &rhs) {
     destroy();
-    std::cout << "here" << std::endl;
     copy(rhs);
   }
   return *this;
-}*/
+}
 
 void Graph::copy(const Graph& other) {
   for (std::pair<int, VertexData*> vertex : other.vertexes_) {
@@ -34,7 +32,6 @@ void Graph::destroy() {
   // delete each vertex's allocated adjacent edge list (not the edges)
   for (std::pair<int, VertexData*> element : vertexes_) {
    VertexData* to_delete = element.second;
-   delete to_delete->adjacent_edges_;
    delete to_delete;
   }
   // delete each edge
@@ -49,7 +46,7 @@ void Graph::insertVertex(Station station_to_add) {
   if (to_return_iter != vertexes_.end()) {
     return;
   }
-  std::list<Edge*>* adjacent_edges_ = new std::list<Edge*>();
+  std::list<Edge*> adjacent_edges_;
   vertexes_[station_to_add.id_] = new VertexData(station_to_add, adjacent_edges_);
 }
 
@@ -78,8 +75,8 @@ void Graph::insertEdge(VertexData* vertex_one, VertexData* vertex_two) {
   }
   Edge* new_edge = new Edge(vertex_one, vertex_two);
   // ensure no duplicate edges are created
-  std::list<Edge*>* vertex_one_edges = vertex_one->adjacent_edges_;
-  for (Edge* edge : *vertex_one_edges) {
+  std::list<Edge*> vertex_one_edges = vertex_one->adjacent_edges_;
+  for (Edge* edge : vertex_one_edges) {
     if (edge->start_vertex_ == vertex_one || edge->end_vertex_ == vertex_one) {
       if (edge->start_vertex_ == vertex_two || edge->end_vertex_ == vertex_two) {
         delete new_edge;
@@ -87,8 +84,8 @@ void Graph::insertEdge(VertexData* vertex_one, VertexData* vertex_two) {
       }
     }
   }
-  vertex_one->adjacent_edges_->push_back(new_edge);
-  vertex_two->adjacent_edges_->push_back(new_edge);
+  vertex_one->adjacent_edges_.push_back(new_edge);
+  vertex_two->adjacent_edges_.push_back(new_edge);
   edges_.push_back(new_edge);
 }
 
