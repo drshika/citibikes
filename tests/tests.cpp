@@ -1,6 +1,8 @@
 #include "../project/catch/catch.hpp"
 #include "../Graph.h"
 #include "../Graph.cpp"
+#include "../DFS.h"
+#include "../DFS.cpp"
 
 #include <iostream>
 
@@ -18,9 +20,11 @@ TEST_CASE("Two Different Edges", "[edgeEquality]") {
   Graph::Station test_station_b = Graph::Station(1, 0, 0);
   Graph::Station test_station_c = Graph::Station(3, 0, 0);
 
-  Graph::VertexData* vertex_a_data = new Graph::VertexData(test_station_a, nullptr);
-  Graph::VertexData* vertex_b_data = new Graph::VertexData(test_station_b, nullptr);
-  Graph::VertexData* vertex_c_data = new Graph::VertexData(test_station_c, nullptr);
+  std::list<Graph::Edge*> empty_list;
+
+  Graph::VertexData* vertex_a_data = new Graph::VertexData(test_station_a, empty_list);
+  Graph::VertexData* vertex_b_data = new Graph::VertexData(test_station_b, empty_list);
+  Graph::VertexData* vertex_c_data = new Graph::VertexData(test_station_c, empty_list);
 
   Graph::Edge* edge_one = new Graph::Edge(vertex_a_data, vertex_b_data);
   Graph::Edge* edge_two = new Graph::Edge(vertex_a_data, vertex_c_data);
@@ -39,8 +43,10 @@ TEST_CASE("Edges with Same Start and Endpoints", "[edgeEquality]") {
   Graph::Station test_station_a = Graph::Station(0, 0, 0);
   Graph::Station test_station_b = Graph::Station(1, 0, 0);
 
-  Graph::VertexData* vertex_a_data = new Graph::VertexData(test_station_a, nullptr);
-  Graph::VertexData* vertex_b_data = new Graph::VertexData(test_station_b, nullptr);
+  std::list<Graph::Edge*> empty_list;
+
+  Graph::VertexData* vertex_a_data = new Graph::VertexData(test_station_a, empty_list);
+  Graph::VertexData* vertex_b_data = new Graph::VertexData(test_station_b, empty_list);
 
   Graph::Edge* edge_one = new Graph::Edge(vertex_a_data, vertex_b_data);
   Graph::Edge* edge_two = new Graph::Edge(vertex_a_data, vertex_b_data);
@@ -58,8 +64,10 @@ TEST_CASE ("Edges with Same Endpoints in Different Order", "[edgeEquality]") {
   Graph::Station test_station_a = Graph::Station(0, 0, 0);
   Graph::Station test_station_b = Graph::Station(1, 0, 0);
 
-  Graph::VertexData* vertex_a_data = new Graph::VertexData(test_station_a, nullptr);
-  Graph::VertexData* vertex_b_data = new Graph::VertexData(test_station_b, nullptr);
+  std::list<Graph::Edge*> empty_list;
+
+  Graph::VertexData* vertex_a_data = new Graph::VertexData(test_station_a, empty_list);
+  Graph::VertexData* vertex_b_data = new Graph::VertexData(test_station_b, empty_list);
 
   Graph::Edge* edge_one = new Graph::Edge(vertex_a_data, vertex_b_data);
   Graph::Edge* edge_two = new Graph::Edge(vertex_b_data, vertex_a_data);
@@ -264,12 +272,12 @@ TEST_CASE("Test Add One Edge", "[graphImplementation][addEdge]") {
   REQUIRE((*resulting_edge == *expected_edge));
 
   // test vertex's edge lists were updated 
-  REQUIRE(vertex_a->adjacent_edges_->size() == 1);
-  REQUIRE(vertex_b->adjacent_edges_->size() == 1);
+  REQUIRE(vertex_a->adjacent_edges_.size() == 1);
+  REQUIRE(vertex_b->adjacent_edges_.size() == 1);
 
   // test vertex edge lists correctly updated
-  REQUIRE((*(vertex_a->adjacent_edges_->front()) == *expected_edge));
-  REQUIRE((*(vertex_b->adjacent_edges_->front()) == *expected_edge));
+  REQUIRE((*(vertex_a->adjacent_edges_.front()) == *expected_edge));
+  REQUIRE((*(vertex_b->adjacent_edges_.front()) == *expected_edge));
 
   // delete allocated memory for valgrind
   delete expected_edge;
@@ -309,9 +317,9 @@ TEST_CASE("Test Add Multiple Edges", "[graphImplementation][addEdge]") {
   }
 
     // test vertex's edge lists were updated 
-  REQUIRE(vertex_a->adjacent_edges_->size() == 2);
-  REQUIRE(vertex_b->adjacent_edges_->size() == 2);
-  REQUIRE(vertex_c->adjacent_edges_->size() == 2);
+  REQUIRE(vertex_a->adjacent_edges_.size() == 2);
+  REQUIRE(vertex_b->adjacent_edges_.size() == 2);
+  REQUIRE(vertex_c->adjacent_edges_.size() == 2);
 
   // delete allocated memory for valgrind
   delete expected_edge_a;
@@ -343,12 +351,12 @@ TEST_CASE("Duplicate Edge", "[valgrind][graphImplementation][addEdge]") {
   REQUIRE((*resulting_edge == *expected_edge));
 
     // test vertex's edge lists were updated 
-  REQUIRE(vertex_a->adjacent_edges_->size() == 1);
-  REQUIRE(vertex_b->adjacent_edges_->size() == 1);
+  REQUIRE(vertex_a->adjacent_edges_.size() == 1);
+  REQUIRE(vertex_b->adjacent_edges_.size() == 1);
 
   // test vertex edge lists correctly updated
-  REQUIRE((*(vertex_a->adjacent_edges_->front()) == *expected_edge));
-  REQUIRE((*(vertex_b->adjacent_edges_->front()) == *expected_edge));
+  REQUIRE((*(vertex_a->adjacent_edges_.front()) == *expected_edge));
+  REQUIRE((*(vertex_b->adjacent_edges_.front()) == *expected_edge));
 
   // delete allocated memory for valgrind
   delete expected_edge;
@@ -369,7 +377,7 @@ TEST_CASE("Self Loops", "[valgrind][graphImplementation][addEdge]") {
   REQUIRE(resulting_edges.size() == 0);
 
   // test vertex edge list empty
-  REQUIRE(vertex_a->adjacent_edges_->empty());
+  REQUIRE(vertex_a->adjacent_edges_.empty());
 }
 
 /**
@@ -406,17 +414,17 @@ TEST_CASE("Self Loops", "[valgrind][graphImplementation][addEdge]") {
    REQUIRE((expected_edge_b == *(recieved_edges.front())));   
 
    // test vertex edges
-   REQUIRE(first_vertex->adjacent_edges_->size() == 1);
-   REQUIRE((*(first_vertex->adjacent_edges_->front()) == expected_edge_a));
+   REQUIRE(first_vertex->adjacent_edges_.size() == 1);
+   REQUIRE((*(first_vertex->adjacent_edges_.front()) == expected_edge_a));
 
-   std::list<Graph::Edge*>* second_vertex_edges = second_vertex->adjacent_edges_;
-   REQUIRE(second_vertex_edges->size() == 2);
-   REQUIRE((*(second_vertex_edges->front()) == expected_edge_a));
-   second_vertex_edges->pop_front();
-   REQUIRE((*(second_vertex_edges->front()) == expected_edge_b));   
+   std::list<Graph::Edge*> second_vertex_edges = second_vertex->adjacent_edges_;
+   REQUIRE(second_vertex_edges.size() == 2);
+   REQUIRE((*(second_vertex_edges.front()) == expected_edge_a));
+   second_vertex_edges.pop_front();
+   REQUIRE((*(second_vertex_edges.front()) == expected_edge_b));   
 
-   REQUIRE(third_vertex->adjacent_edges_->size() == 1);
-   REQUIRE((*(third_vertex->adjacent_edges_->front()) == expected_edge_b));
+   REQUIRE(third_vertex->adjacent_edges_.size() == 1);
+   REQUIRE((*(third_vertex->adjacent_edges_.front()) == expected_edge_b));
  }
 
  TEST_CASE("Multiple files", "[dataFromFile]") {
@@ -456,23 +464,23 @@ TEST_CASE("Self Loops", "[valgrind][graphImplementation][addEdge]") {
    REQUIRE((expected_edge_c == *(recieved_edges.front())));   
 
    // test vertex edges
-   std::list<Graph::Edge*>* first_vertex_edges = first_vertex->adjacent_edges_;
-   REQUIRE(first_vertex_edges->size() == 2);
-   REQUIRE((*(first_vertex_edges->front()) == expected_edge_a));
-   first_vertex_edges->pop_front();
-   REQUIRE((*(first_vertex_edges->front()) == expected_edge_c));  
+   std::list<Graph::Edge*> first_vertex_edges = first_vertex->adjacent_edges_;
+   REQUIRE(first_vertex_edges.size() == 2);
+   REQUIRE((*(first_vertex_edges.front()) == expected_edge_a));
+   first_vertex_edges.pop_front();
+   REQUIRE((*(first_vertex_edges.front()) == expected_edge_c));  
 
-   std::list<Graph::Edge*>* second_vertex_edges = second_vertex->adjacent_edges_;
-   REQUIRE(second_vertex_edges->size() == 2);
-   REQUIRE((*(second_vertex_edges->front()) == expected_edge_a));
-   second_vertex_edges->pop_front();
-   REQUIRE((*(second_vertex_edges->front()) == expected_edge_b));   
+   std::list<Graph::Edge*> second_vertex_edges = second_vertex->adjacent_edges_;
+   REQUIRE(second_vertex_edges.size() == 2);
+   REQUIRE((*(second_vertex_edges.front()) == expected_edge_a));
+   second_vertex_edges.pop_front();
+   REQUIRE((*(second_vertex_edges.front()) == expected_edge_b));   
 
-   REQUIRE(third_vertex->adjacent_edges_->size() == 1);
-   REQUIRE((*(third_vertex->adjacent_edges_->front()) == expected_edge_b));
+   REQUIRE(third_vertex->adjacent_edges_.size() == 1);
+   REQUIRE((*(third_vertex->adjacent_edges_.front()) == expected_edge_b));
 
-   REQUIRE(fourth_vertex->adjacent_edges_->size() == 1);
-   REQUIRE((*(fourth_vertex->adjacent_edges_->front()) == expected_edge_c));
+   REQUIRE(fourth_vertex->adjacent_edges_.size() == 1);
+   REQUIRE((*(fourth_vertex->adjacent_edges_.front()) == expected_edge_c));
  }
 
 TEST_CASE("Repeated Edges", "[valgrind][dataFromFile]") {
@@ -498,10 +506,64 @@ TEST_CASE("Repeated Edges", "[valgrind][dataFromFile]") {
    REQUIRE((expected_edge_a == *(with_data.getEdgeList().front())));
 
    // test vertex edges
-   REQUIRE(first_vertex->adjacent_edges_->size() == 1);
-   REQUIRE((*(first_vertex->adjacent_edges_->front()) == expected_edge_a));
-   REQUIRE(second_vertex->adjacent_edges_->size() == 1);
-   REQUIRE((*(second_vertex->adjacent_edges_->front()) == expected_edge_a));
+   REQUIRE(first_vertex->adjacent_edges_.size() == 1);
+   REQUIRE((*(first_vertex->adjacent_edges_.front()) == expected_edge_a));
+   REQUIRE(second_vertex->adjacent_edges_.size() == 1);
+   REQUIRE((*(second_vertex->adjacent_edges_.front()) == expected_edge_a));
+}
+
+TEST_CASE("Test Basic DFS Traversal", "[valgrind][DFS]") {
+  Graph* test_graph = new Graph();
+  test_graph->addDataFromFile("tests/test_data/traversal1_dat.csv");
+  DFS test_traversal = DFS(test_graph, test_graph->getVertex(0));
+
+  std::vector<int> expected_stations = {4, 3, 2, 1, 0};
+  for (auto it = test_traversal.begin(); it != test_traversal.end(); ++it) {
+    REQUIRE((*it)->station_.id_ == expected_stations.back());
+    expected_stations.pop_back();
+  }
+  delete test_graph;
+}
+
+TEST_CASE("Test DFS Traversal", "[DFS]") {
+   Graph* test_graph = new Graph();
+   test_graph->addDataFromFile("tests/test_data/traversal2_dat.csv");
+   DFS test_traversal = DFS((test_graph), (test_graph->getVertex(0)));
+
+   std::vector<int> expected_values = {1, 4, 2, 3, 0};
+   for (auto it = test_traversal.begin(); it != test_traversal.end(); ++it) {
+     REQUIRE((*it)->station_.id_ == expected_values.back());
+     expected_values.pop_back();
+   }
+   delete test_graph;
+}
+
+TEST_CASE("Test Basic DFS With Multiple Connected Components", "[valgrind][DFS]") {
+  Graph* test_graph = new Graph();
+  test_graph->addDataFromFile("tests/test_data/traversal3_dat.csv");
+
+  DFS test_traversal = DFS(test_graph, test_graph->getVertex(0));
+
+  std::vector<int> expected_values = {4, 3, 2, 1, 0};
+  for (auto it = test_traversal.begin(); it != test_traversal.end(); ++it) {
+    REQUIRE((*it)->station_.id_ == expected_values.back());
+    expected_values.pop_back();
+  }
+  delete test_graph;
+}
+
+TEST_CASE("Test DFS With Multiple Connnnected Components", "[DFS]") {
+  Graph* test_graph = new Graph();
+  test_graph->addDataFromFile("tests/test_data/traversal4_dat.csv");
+
+  DFS test_traversal = DFS(test_graph, test_graph->getVertex(0));
+
+  std::vector<int> expected_values = {5, 4, 3, 2, 1, 0};
+  for (auto it = test_traversal.begin(); it != test_traversal.end(); ++it) {
+    REQUIRE((*it)->station_.id_ == expected_values.back());
+    expected_values.pop_back();
+  }
+  delete test_graph;
 }
 
 TEST_CASE("Unconnected Zero Degree Non-Eulerian Graph",

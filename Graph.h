@@ -15,6 +15,16 @@
 class Graph {
 
 public:
+  /**
+    * This enumeration stores labels for edges and verticies in the traversal
+    * 
+    * kVisited: The Vertex Has been Visited
+    * kUnexplored: The edge or vertex is unexplored
+    * kDiscovery: The edge is a discovery edge
+    * kBack: The edge is a back edge
+    */
+  enum Label {kVisited, kUnexplored, kDiscovery, kBack};
+
   struct Edge;
 
   /**
@@ -54,7 +64,10 @@ public:
     // Station storing the station that the Vertex Represents
     Station station_;
     // list of edges adjacent to the vertex
-    std::list<Edge*>* adjacent_edges_;
+    std::list<Edge*> adjacent_edges_;
+
+    // Optional label for use in Graph Traversals (default is Unexplored)
+    Label label = kUnexplored;
 
     /**
      * Constructor
@@ -62,7 +75,7 @@ public:
      * @param station a Station representing the station that the vertex represents in the graph
      * @param adjacent_edges a pointer to a list storing pointers to the edges that are adjacent to the vertex
      */
-    VertexData(Station station, std::list<Edge*>* adjacent_edges) {
+    VertexData(Station station, std::list<Edge*> adjacent_edges) {
       station_ = station;
       adjacent_edges_ = adjacent_edges;
     }
@@ -76,6 +89,9 @@ public:
     VertexData* start_vertex_;
     // Pointer storing the ending vertex of the edge
     VertexData* end_vertex_;
+
+    // Optional label for use in Graph Traversals (default is Unexplored)
+    Label label = kUnexplored;
 
     /**
      * Constructor
@@ -120,7 +136,7 @@ public:
    */
   Graph(const Graph& to_copy);
 
-  //Graph& operator=(const Graph& rhs);
+  Graph& operator=(const Graph& rhs);
 
   /**
    * Deletes all allocated memory
