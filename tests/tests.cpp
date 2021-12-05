@@ -624,6 +624,13 @@ TEST_CASE("One Eulerian Cycle", "[valgrind][checkEulerian]") {
 
   // REQUIRE(eulerian_cycle.isConnected());
   REQUIRE(eulerian_cycle.isEulerian() == 2);
+
+  // add station vertex without edge makes cycle become unconnected and non-eulerian
+  Graph::Station test_station_3 = Graph::Station(3, 0, 0);
+  eulerian_cycle.insertVertex(test_station_3);
+
+  // REQUIRE_FALSE(eulerian_cycle.isConnected());
+  REQUIRE(eulerian_cycle.isEulerian() == 0);
 }
 
 TEST_CASE("Multiple Eulerian Cycles", "[valgrind][checkEulerian]") {
