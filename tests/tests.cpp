@@ -734,14 +734,14 @@ TEST_CASE("Check NortheastMost", "[Helper]") {
   Graph with_data;
   with_data.addDataFromFile("tests/test_data/test_dat_ex.csv");
 
-  Graph::VertexData * north_e_most = with_data.northwestMost();
-  REQUIRE(north_e_most->station_.id_ == 0);
+  Graph::VertexData * north_w_most = with_data.northwestMost();
+  REQUIRE(north_w_most->station_.id_ == 0);
 }
 
 TEST_CASE("Check SoutheastMost", "[Helper]") {
   Graph with_data;
   with_data.addDataFromFile("tests/test_data/test_dat_ex.csv");
 
-  Graph::VertexData * north_e_most = with_data.southeastMost();
-  REQUIRE(north_e_most->station_.id_ == 3);
+  Graph::VertexData * south_e_most = with_data.southeastMost();
+  REQUIRE(south_e_most->station_.id_ == 3);
 }

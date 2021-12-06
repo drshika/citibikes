@@ -1,5 +1,6 @@
 #include "Graph.h"
 #include "DFS.h"
+#include <limits.h>
 
 Graph::~Graph() {
   destroy();
@@ -217,14 +218,16 @@ int Graph::isEulerian() {
   return 2;
 }
 
-Graph::VertexData * northwestMost() {
-  std::map<int, Graph::VertexData*>::iterator it;
-  int lat = -1;
-  int longi = -1;
+Graph::VertexData * Graph::northwestMost() {
+  std::map<int, VertexData*>::iterator it;
+  int lat = INT_MAX;
+  int longi = INT_MAX;
   Graph::VertexData * to_return;
+
   for (it = vertexes_.begin(); it != vertexes_.end(); it++) {
-    Graph::Station * station = it->second.station_;
-    if (station->latitude_ < lat && station->longitude_ > longi) {
+    Graph::Station * station = &it->second->station_;
+    //northwest most means that the latitude and longitude of the station is the smallest
+    if (station->latitude_ < lat && station->longitude_ < longi) {
       lat = station->latitude_;
       longi = station->longitude_;
       to_return = it->second;
@@ -232,14 +235,16 @@ Graph::VertexData * northwestMost() {
   }
   return to_return;
 }
-Graph::VertexData * southeastMost() {
-  std::map<int, Graph::VertexData*> iterator it;
+Graph::VertexData * Graph::southeastMost() {
+  std::map<int, VertexData*>::iterator it;
   int lat = -1;
   int longi = -1;
   Graph::VertexData * to_return;
+
   for (it = vertexes_.begin(); it != vertexes_.end(); it++) {
-    Graph::Station * station = it->second.station_;
-    if (station->latitude_ > lat && station->longitude_ < longi) {
+    Graph::Station * station = &it->second->station_;
+    //southeast most means that the latitude and longitude of the station is the largest
+    if (station->latitude_ > lat && station->longitude_ > longi) {
       lat = station->latitude_;
       longi = station->longitude_;
       to_return = it->second;
