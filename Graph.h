@@ -210,6 +210,20 @@ public:
    */
   int isEulerian(); 
 
+  /**
+   * Helper to return the northwest most station on the map
+   * 
+   * @return a map representing the vertex map of the graph (Key: station id, Value: Vertex of station with the given key's id)
+   */
+  VertexData * northwestMost();
+
+  /**
+   * Helper to return the southeast most station on the map
+   * 
+   * @return a map representing the vertex map of the graph (Key: station id, Value: Vertex of station with the given key's id)
+   */
+  VertexData * southeastMost();
+
 private:
   /**
    * A map representing the verticies in the graph

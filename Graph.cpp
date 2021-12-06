@@ -1,5 +1,6 @@
 #include "Graph.h"
 #include "DFS.h"
+#include <limits.h>
 
 Graph::~Graph() {
   destroy();
@@ -216,4 +217,41 @@ int Graph::isEulerian() {
   // odd count is 0, meaning graph has Eulerian Cycle
   // odd count cannot be 1 for undirected graph
   return 2;
+}
+
+Graph::VertexData * Graph::northwestMost() {
+  std::map<int, VertexData*>::iterator it;
+  int lat = -1;
+  int longi = INT_MAX;
+  Graph::VertexData * to_return;
+
+  for (it = vertexes_.begin(); it != vertexes_.end(); it++) { //
+    Graph::Station * station = &it->second->station_;
+    //northwest most means that the latitude is the greatest and the longitude is the smallest
+    if (station->longitude_ <= longi && station->latitude_ >= lat) {
+      lat = station->latitude_;
+      longi = station->longitude_;
+      to_return = it->second;
+    }
+  }
+  return to_return;
+}
+Graph::VertexData * Graph::southeastMost() {
+  std::map<int, VertexData*>::iterator it;
+  int lat = INT_MAX;
+  int longi = -1;
+
+  Graph::VertexData * to_return;
+  //southeast most means that the latitude is the smallest and the longitude is the greatest     
+  for (it = vertexes_.begin(); it != vertexes_.end(); it++) {
+    Graph::Station * station = &it->second->station_;
+    if (station->latitude_ <= lat && station->longitude_ >= longi) {
+      std::cout << station->longitude_ << std::endl;
+      std::cout << longi << std::endl;
+      lat = station->latitude_;
+      longi = station->longitude_;
+      to_return = it->second;
+    }
+  }
+  return to_return;
 }
