@@ -522,6 +522,7 @@ TEST_CASE("Test Basic DFS Traversal", "[valgrind][DFS]") {
     REQUIRE((*it)->station_.id_ == expected_stations.back());
     expected_stations.pop_back();
   }
+  REQUIRE(test_traversal.getNumConnectedComponents() == 1);
   delete test_graph;
 }
 
@@ -535,6 +536,7 @@ TEST_CASE("Test DFS Traversal", "[DFS]") {
      REQUIRE((*it)->station_.id_ == expected_values.back());
      expected_values.pop_back();
    }
+  REQUIRE(test_traversal.getNumConnectedComponents() == 1);
    delete test_graph;
 }
 
@@ -549,6 +551,7 @@ TEST_CASE("Test Basic DFS With Multiple Connected Components", "[valgrind][DFS]"
     REQUIRE((*it)->station_.id_ == expected_values.back());
     expected_values.pop_back();
   }
+  REQUIRE(test_traversal.getNumConnectedComponents() == 2);
   delete test_graph;
 }
 
@@ -563,6 +566,7 @@ TEST_CASE("Test DFS With Multiple Connnnected Components", "[DFS]") {
     REQUIRE((*it)->station_.id_ == expected_values.back());
     expected_values.pop_back();
   }
+  REQUIRE(test_traversal.getNumConnectedComponents() == 2);
   delete test_graph;
 }
 

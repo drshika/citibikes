@@ -102,6 +102,13 @@ class DFS {
       */
      void checkVerticiesAllExplored();
 
+     /**
+      * Function that returns the current number of connected components in the traversal
+      *
+      * @return the current number of connected components is the traversal
+      */
+     size_t getNumConnectedComponents();
+
     private: 
       // Stores the graph being traversed
       Graph* graph_;
@@ -122,4 +129,7 @@ class DFS {
        * completely traversed 
        */
       size_t index_in_map_;
+
+      // size_t to track how many connected components are in the graph
+      size_t num_connected_components = 0;
 };
