@@ -216,3 +216,34 @@ int Graph::isEulerian() {
   // odd count cannot be 1 for undirected graph
   return 2;
 }
+
+Graph::VertexData * northwestMost() {
+  std::map<int, Graph::VertexData*>::iterator it;
+  int lat = -1;
+  int longi = -1;
+  Graph::VertexData * to_return;
+  for (it = vertexes_.begin(); it != vertexes_.end(); it++) {
+    Graph::Station * station = it->second.station_;
+    if (station->latitude_ < lat && station->longitude_ > longi) {
+      lat = station->latitude_;
+      longi = station->longitude_;
+      to_return = it->second;
+    }
+  }
+  return to_return;
+}
+Graph::VertexData * southeastMost() {
+  std::map<int, Graph::VertexData*> iterator it;
+  int lat = -1;
+  int longi = -1;
+  Graph::VertexData * to_return;
+  for (it = vertexes_.begin(); it != vertexes_.end(); it++) {
+    Graph::Station * station = it->second.station_;
+    if (station->latitude_ > lat && station->longitude_ < longi) {
+      lat = station->latitude_;
+      longi = station->longitude_;
+      to_return = it->second;
+    }
+  }
+  return to_return;
+}
