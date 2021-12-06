@@ -85,3 +85,15 @@
 
 **Goals for Next Week**
 - Work on the assigned coding tasks
+
+### 12/5/21
+**What We Planned**
+- Work on the assigned coding tasks
+
+**What We Acomplished**
+- DFS Traversal of the Graph Complete
+- Function to Determine if the Graph is Eulerian or not Complete 
+- Mid Project Check-in Complete
+
+**Goals for Next Week**
+- Project Completed

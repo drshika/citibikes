@@ -185,7 +185,8 @@ bool Graph::isConnected() {
   if (vertexes_.size() == 0) return false;
 
   // complete dfs traversal
-  DFS dfs = DFS(this, this->getVertex(0));
+
+  DFS dfs = DFS(this, vertexes_.begin()->second);
   for (auto it = dfs.begin(); it != dfs.end(); ++it) {
     // exit early if more than 1 connected components
     if (dfs.getNumConnectedComponents() != 1) return false;
