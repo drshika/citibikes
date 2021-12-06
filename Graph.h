@@ -201,7 +201,7 @@ public:
    *
    * @return true if the graph is connected, false otherwise
    */
-  bool isConnected() const;
+  bool isConnected();
 
   /**
    * Determines if the graph is not Eulerian, or if the graph has a Eulerian path or cycle

@@ -1,5 +1,6 @@
 #include "Graph.h"
-  
+#include "DFS.h"
+
 Graph::~Graph() {
   destroy();
 }
@@ -178,19 +179,29 @@ void Graph::addDataFromFile(std::string file_path) {
   }
 }
 
-bool Graph::isConnected() const {
-  return true;
+bool Graph::isConnected() {
+  // graph with no vertexes is not connected
+  if (vertexes_.size() == 0) return false;
+
+  // complete dfs traversal
+  DFS dfs = DFS(this, this->getVertex(0));
+  for (auto it = dfs.begin(); it != dfs.end(); ++it) {
+    // exit early if more than 1 connected components
+    if (dfs.getNumConnectedComponents() != 1) return false;
+  }
+
+  return (dfs.getNumConnectedComponents() == 1);
 }
 
 int Graph::isEulerian() {
   // unconnected graph is not Eulerian
   if (!isConnected()) return 0;
 
-  // count number of  vertices with odd degree
+  // count number of vertices with odd degree
   int odd_count = 0;
   std::map<int, VertexData*>::iterator it;
   for (it = vertexes_.begin(); it != vertexes_.end(); it++) {
-    if (it->second->adjacent_edges_->size() % 2 == 1) {
+    if (it->second->adjacent_edges_.size() % 2 == 1) {
       ++odd_count;
     }
   }

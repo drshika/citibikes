@@ -571,14 +571,14 @@ TEST_CASE("Test DFS With Multiple Connnnected Components", "[DFS]") {
 }
 
 TEST_CASE("Unconnected Zero Degree Non-Eulerian Graph",
-          "[valgrind][checkEulerian]") {
+          "[valgrind][checkConnected][checkEulerian]") {
   Graph non_eulerian;
 
-  // REQUIRE_FALSE(non_eulerian.isConnected());
+  REQUIRE_FALSE(non_eulerian.isConnected());
   REQUIRE(non_eulerian.isEulerian() == 0);
 }
 
-TEST_CASE("Euler Path Plus Unconnected Vertex", "[valgrind][checkEulerian]") {
+TEST_CASE("Euler Path Plus Unconnected Vertex", "[valgrind][checkConnected][checkEulerian]") {
   Graph::Station test_station_0 = Graph::Station(0, 0, 0);
   Graph::Station test_station_1 = Graph::Station(1, 0, 0);
   Graph::Station test_station_2 = Graph::Station(2, 0, 0);
@@ -606,11 +606,11 @@ TEST_CASE("Euler Path Plus Unconnected Vertex", "[valgrind][checkEulerian]") {
   non_eulerian.insertEdge(vertex_3, vertex_4);
   // vertex from test_station_5 not connected to graph
 
-  // REQUIRE_FALSE(non_eulerian.isConnected());
+  REQUIRE_FALSE(non_eulerian.isConnected());
   REQUIRE(non_eulerian.isEulerian() == 0);
 }
 
-TEST_CASE("One Eulerian Path", "[valgrind][checkEulerian]") {
+TEST_CASE("One Eulerian Path", "[valgrind][checkConnected][checkEulerian]") {
   Graph::Station test_station_0 = Graph::Station(0, 0, 0);
   Graph::Station test_station_1 = Graph::Station(1, 0, 0);  
   Graph::Station test_station_2 = Graph::Station(2, 0, 0);
@@ -636,11 +636,11 @@ TEST_CASE("One Eulerian Path", "[valgrind][checkEulerian]") {
   eulerian_path.insertEdge(vertex_0, vertex_3);
   eulerian_path.insertEdge(vertex_3, vertex_4);
 
-  // REQUIRE(eulerian_path.isConnected());
+  REQUIRE(eulerian_path.isConnected());
   REQUIRE(eulerian_path.isEulerian() == 1);
 }
 
-TEST_CASE("Multiple Eulerian Paths", "[valgrind][checkEulerian]") {
+TEST_CASE("Multiple Eulerian Paths", "[valgrind][checkConnected][checkEulerian]") {
   Graph::Station test_station_0 = Graph::Station(0, 0, 0);
   Graph::Station test_station_1 = Graph::Station(1, 0, 0);
   Graph::Station test_station_2 = Graph::Station(2, 0, 0);
@@ -666,11 +666,11 @@ TEST_CASE("Multiple Eulerian Paths", "[valgrind][checkEulerian]") {
   eulerian_path.insertEdge(vertex_0, vertex_3);
   eulerian_path.insertEdge(vertex_0, vertex_4);
 
-  // REQUIRE(eulerian_path.isConnected());
+  REQUIRE(eulerian_path.isConnected());
   REQUIRE(eulerian_path.isEulerian() == 1);
 }
 
-TEST_CASE("One Eulerian Cycle", "[valgrind][checkEulerian]") {
+TEST_CASE("One Eulerian Cycle", "[valgrind][checkConnected][checkEulerian]") {
   Graph::Station test_station_0 = Graph::Station(0, 0, 0);
   Graph::Station test_station_1 = Graph::Station(1, 0, 0);
   Graph::Station test_station_2 = Graph::Station(2, 0, 0);
@@ -688,18 +688,18 @@ TEST_CASE("One Eulerian Cycle", "[valgrind][checkEulerian]") {
   eulerian_cycle.insertEdge(vertex_1, vertex_2);
   eulerian_cycle.insertEdge(vertex_2, vertex_0);
 
-  // REQUIRE(eulerian_cycle.isConnected());
+  REQUIRE(eulerian_cycle.isConnected());
   REQUIRE(eulerian_cycle.isEulerian() == 2);
 
   // add station vertex without edge makes cycle become unconnected and non-eulerian
   Graph::Station test_station_3 = Graph::Station(3, 0, 0);
   eulerian_cycle.insertVertex(test_station_3);
 
-  // REQUIRE_FALSE(eulerian_cycle.isConnected());
+  REQUIRE_FALSE(eulerian_cycle.isConnected());
   REQUIRE(eulerian_cycle.isEulerian() == 0);
 }
 
-TEST_CASE("Multiple Eulerian Cycles", "[valgrind][checkEulerian]") {
+TEST_CASE("Multiple Eulerian Cycles", "[valgrind][checkConnected][checkEulerian]") {
   Graph::Station test_station_0 = Graph::Station(0, 0, 0);
   Graph::Station test_station_1 = Graph::Station(1, 0, 0);
   Graph::Station test_station_2 = Graph::Station(2, 0, 0);
@@ -726,6 +726,6 @@ TEST_CASE("Multiple Eulerian Cycles", "[valgrind][checkEulerian]") {
   eulerian_cycle.insertEdge(vertex_2, vertex_4);
   eulerian_cycle.insertEdge(vertex_3, vertex_4);
 
-  // REQUIRE(eulerian_cycle.isConnected());
+  REQUIRE(eulerian_cycle.isConnected());
   REQUIRE(eulerian_cycle.isEulerian() == 2);
 }
