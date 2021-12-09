@@ -282,34 +282,38 @@ void Graph::removeVertex(Graph::VertexData* to_remove) {
 size_t Graph::size() const {
   return vertexes_.size();
 }
-/*
-void Graph::getHamiltonianCycle(Graph::VertexData* current_vertex, Graph* full_graph, Graph* hamiltonian, 
-    Graph::VertexData* starting_vertex, std::vector<Graph*> hamiltonians) {
-      std::cout << "here: " << current_vertex->station_.id_ << " size: " << hamiltonian->size() << std::endl;
+
+void Graph::getHamiltonianCycle(Graph::VertexData* current_hamiltonian_vertex, Graph* full_graph, Graph* hamiltonian, 
+    Graph::VertexData* current_graph_vertex, std::vector<Graph*> hamiltonians, Graph::VertexData* start_vertex,
+    Graph::VertexData* hamiltonian_start) {
+  //    std::cout << "here: " << current_vertex->station_.id_ << " size: " << hamiltonian->size() << std::endl;
   if (hamiltonian->size() == full_graph->size()) {
-    std::cout << "required met: " << std::endl;
-    if (current_vertex->isAdjacentVertex(starting_vertex)) {
-      hamiltonian->insertEdge(current_vertex, starting_vertex);
+ //   std::cout << "required met: " << std::endl;
+    if (current_graph_vertex->isAdjacentVertex(start_vertex)) {
+      hamiltonian->insertEdge(hamiltonian_start, current_hamiltonian_vertex);
       hamiltonians.push_back(hamiltonian);
       printGraph(hamiltonian);
     }
   }
-  for (Edge* edge : current_vertex->adjacent_edges_) {
-    VertexData* other_vertex = edge->getOtherVertex(current_vertex);
-    std::cout << "edge: " << current_vertex->station_.id_ << "->" << other_vertex->station_.id_ << std::endl;
+  for (Edge* edge : current_graph_vertex->adjacent_edges_) {
+    VertexData* other_vertex = edge->getOtherVertex(current_graph_vertex);
+  //  std::cout << "edge: " << current_graph_vertex->station_.id_ << "->" << other_vertex->station_.id_ << std::endl;
     if (other_vertex->label != Graph::Label::kVisited) {
-      std::cout << "new edge" << std::endl;
+     // std::cout << "new edge" << std::endl;
       other_vertex->label = Graph::Label::kVisited;
       hamiltonian->insertVertex(other_vertex->station_);
-      hamiltonian->insertEdge(current_vertex, other_vertex);
-      getHamiltonianCycle(other_vertex, full_graph, hamiltonian, starting_vertex, hamiltonians);
+      VertexData* hamiltonian_other_vertex = hamiltonian->getVertex(other_vertex->station_.id_);
+      hamiltonian->insertEdge(current_hamiltonian_vertex, hamiltonian_other_vertex);
+      getHamiltonianCycle(hamiltonian_other_vertex, full_graph, hamiltonian, other_vertex, hamiltonians, start_vertex,
+        hamiltonian_start);
       other_vertex->label = Graph::Label::kUnexplored;
-      hamiltonian->removeVertex(other_vertex);
+      hamiltonian->removeVertex(hamiltonian_other_vertex);
     }
   }
 }
-*/
+
 void Graph::printGraph(Graph* g) {
+  std::cout << "GRAPH" << std::endl;
   for (Edge* edge : g->getEdgeList()) {
     std::cout << "edge: " << edge->start_vertex_->station_.id_ << "->" << edge->end_vertex_->station_.id_ << std::endl;
   }

@@ -730,18 +730,20 @@ TEST_CASE("Multiple Eulerian Cycles", "[valgrind][checkConnected][checkEulerian]
   REQUIRE(eulerian_cycle.isEulerian() == 2);
 }
 
-/*
+
 TEST_CASE("Test Hamiltonian Cycle (Basic)", "[HamiltonianCycle][valgrind]") {
   Graph* test = new Graph();
-  test->addDataFromFile("tests/test_data/hamiltonian1_dat.csv");
+  test->addDataFromFile("tests/test_data/hamiltonian2_dat.csv");
   Graph::VertexData* start = test->getVertex(0);
   start->label = Graph::Label::kVisited;
   Graph* hamiltonian = new Graph();
+  hamiltonian->insertVertex(start->station_);
+  Graph::VertexData* hamiltonian_start = hamiltonian->getVertex(0);
   std::vector<Graph*> vert;
-  test->getHamiltonianCycle(start, test, hamiltonian, start, vert);
+  test->getHamiltonianCycle(hamiltonian_start, test, hamiltonian, start, vert, start, hamiltonian_start);
   delete test;
   delete hamiltonian;
-}*/
+}
 
 TEST_CASE("Test Remove Vertex Without Edges", "[valgrind][RemoveVertex][size]") {
   Graph* test_graph = new Graph();

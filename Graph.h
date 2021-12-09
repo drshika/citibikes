@@ -232,9 +232,9 @@ public:
 
   Graph Dijkstras(VertexData* starting_vertex);
 
-  // hamiltonian cycle helper
-  void getHamiltonianCycle(VertexData* current_vertex, Graph* full_graph, Graph* hamiltonian, VertexData* starting_vertex, 
-      std::vector<Graph*> hamiltonians);
+void getHamiltonianCycle(Graph::VertexData* current_hamiltonian_vertex, Graph* full_graph, Graph* hamiltonian, 
+    Graph::VertexData* current_graph_vertex, std::vector<Graph*> hamiltonians, Graph::VertexData* start_vertex,
+    Graph::VertexData* hamiltonian_start);
 
   size_t size() const;
 
