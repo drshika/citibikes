@@ -1,8 +1,8 @@
 # Analyzing Biking Paths Across New York City
-CS 225 Final Project Proposal for drshika2-meghanr6-jyt3-joannah2
+CS 225 Final Project -  drshika2-meghanr6-jyt3-joannah2
  
 ## Overview ##
-<i> We load in use Dijkstra's Algorithm to find the shortest bike path across New York City. Next, we will determine whether or not there is an Euler Circuit or Euler Path in the graph representing the New York City bike paths. Depending on our answer to this question, we will: (a) Find an Euler Circuit in the graph, (b) Find an Euler Path in the graph, or (c) Find the largest hamiltonian cycle created by the New York City bike paths </i>
+<i> After loading in the data from the dataset (described below), we use Dijkstra's Algorithm to find the shortest bike path across New York City. Using a DFS traversal, we determined there is not a Euler Circuit or Euler Path in the graph representing the New York City bike paths since it is unconnected. Discovering this, we then found the largest hamiltonian cycle created by the New York City bike paths. </i>
  
 ### Dataset / Graph Representation ###
 The [dataset](https://www.kaggle.com/vineethakkinapalli/citibike-bike-sharingnewyork-cityjan-to-apr-2021) provides us data formatted as follows (taken from the dataset documentation):
@@ -25,8 +25,7 @@ birthyear - Year of Birth
 ```
 #### Files: data folder
 We generate a graph with nodes as the dataset stations, and 1 edge is drawn between 2 nodes if there has been at least 1 trip between the stations that they represent. The graph edges are weighted based on the distance between the stations calculated using the latitude and longitude values.
- 
- 
+
 The dataset files are concatenated into 1 large file. We account for human error in the data provided (clean the data) by checking that all lines of data used in the creation of the graph have viable start station id, start station name, start station latitude, start station longitude, end station id, end station name, end station latitude, end station longitude data fields. Otherwise, that line of data is not used.
  
 ## Depth First Search Graph Traversal #
@@ -74,9 +73,9 @@ The dataset files are concatenated into 1 large file. We account for human error
  
 ## Setup ##
 Required installations:
-** [VS Code] (or IDE with C++) (https://code.visualstudio.com/download)
-** [Catch C++] (https://github.com/catchorg/Catch2) (for testing)
-** [Boost C++ Library] (https://www.boost.org/) (for Djikstra's)
+* [VS Code] (or IDE with C++) (https://code.visualstudio.com/download)
+* [Catch C++] (https://github.com/catchorg/Catch2) (for testing)
+* [Boost C++ Library] (https://www.boost.org/) (for Djikstra's)
  
 Build and run in IDE:
 ```
