@@ -79,8 +79,8 @@ Required installations:
  
 Build and run in IDE:
 ```
-make main
-./main
+make
+./project_exe
 ```
  
 ## Testing ##
