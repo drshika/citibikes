@@ -1,5 +1,6 @@
 #include "Graph.h"
 #include "DFS.h"
+#include <limits.h>
 
 bool Graph::VertexData::isAdjacentVertex(VertexData* other_vertex) const {
   for (Edge* edge : adjacent_edges_) {
@@ -21,7 +22,6 @@ Graph::VertexData* Graph::Edge::getOtherVertex(VertexData* vertex) const {
 }
 
 Graph::~Graph() {
-   // std::cout << "destroying" << std::endl;
   destroy();
 }
 
@@ -237,6 +237,7 @@ int Graph::isEulerian() {
   // odd count cannot be 1 for undirected graph
   return 2;
 }
+
 /*
 Graph Graph::Dijkstras(Graph::VertexData* starting_vertex) {
   boost::heap::fibonacci_heap<VertexData*, boost::heap::compare<compareVertex>> priority_queue;
@@ -312,4 +313,40 @@ void Graph::printGraph(Graph* g) {
   for (Edge* edge : g->getEdgeList()) {
     std::cout << "edge: " << edge->start_vertex_->station_.id_ << "->" << edge->end_vertex_->station_.id_ << std::endl;
   }
+}
+
+Graph::VertexData * Graph::northwestMost() {
+  std::map<int, VertexData*>::iterator it;
+  int lat = -1;
+  int longi = INT_MAX;
+  Graph::VertexData * to_return;
+
+  for (it = vertexes_.begin(); it != vertexes_.end(); it++) { //
+    Graph::Station * station = &it->second->station_;
+    //northwest most means that the latitude is the greatest and the longitude is the smallest
+    if (station->longitude_ <= longi && station->latitude_ >= lat) {
+      lat = station->latitude_;
+      longi = station->longitude_;
+      to_return = it->second;
+    }
+  }
+  return to_return;
+}
+
+Graph::VertexData * Graph::southeastMost() {
+  std::map<int, VertexData*>::iterator it;
+  int lat = INT_MAX;
+  int longi = -1;
+
+  Graph::VertexData * to_return;
+  //southeast most means that the latitude is the smallest and the longitude is the greatest     
+  for (it = vertexes_.begin(); it != vertexes_.end(); it++) {
+    Graph::Station * station = &it->second->station_;
+    if (station->latitude_ <= lat && station->longitude_ >= longi) {
+      lat = station->latitude_;
+      longi = station->longitude_;
+      to_return = it->second;
+    }
+  }
+  return to_return;
 }
