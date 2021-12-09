@@ -729,3 +729,68 @@ TEST_CASE("Multiple Eulerian Cycles", "[valgrind][checkConnected][checkEulerian]
   REQUIRE(eulerian_cycle.isConnected());
   REQUIRE(eulerian_cycle.isEulerian() == 2);
 }
+/*
+TEST_CASE("Test Hamiltonian Cycle (Basic)", "[HamiltonianCycle][valgrind]") {
+  Graph* test = new Graph();
+  test->addDataFromFile("tests/test_data/hamiltonian1_dat.csv");
+  Graph::VertexData* start = test->getVertex(0);
+  start->label = Graph::Label::kVisited;
+  Graph* hamiltonian = new Graph();
+  std::vector<Graph*> vert;
+  test->getHamiltonianCycle(start, test, hamiltonian, start, vert);
+  delete test;
+  delete hamiltonian;
+}*/
+
+TEST_CASE("Test Remove Vertex Without Edges", "[valgrind][RemoveVertex][size]") {
+  Graph* test_graph = new Graph();
+  Graph::Station test_station = Graph::Station(0, 0, 0);
+  test_graph->insertVertex(test_station);
+  Graph::VertexData* to_remove = test_graph->getVertex(0);
+  test_graph->removeVertex(to_remove);
+  REQUIRE(test_graph->size() == 0);
+  delete test_graph;
+}
+
+TEST_CASE("Test Remove Vertex With One Edge", "[valgrind][RemoveVertex][size]") {
+  Graph* test_graph = new Graph();
+  test_graph->addDataFromFile("tests/test_data/test_dat1.csv");
+  Graph::VertexData* to_remove = test_graph->getVertex(0);
+  test_graph->removeVertex(to_remove);
+  REQUIRE(test_graph->size() == 2);
+  REQUIRE(test_graph->getEdgeList().size() == 1);
+  delete test_graph;
+}
+
+TEST_CASE("Test Remove Vertex With Edges", "[valgrind][RemoveVertex][size]") {
+  Graph* test_graph = new Graph();
+  test_graph->addDataFromFile("tests/test_data/traversal2_dat.csv");
+  Graph::VertexData* to_remove = test_graph->getVertex(4);
+  test_graph->removeVertex(to_remove);
+  REQUIRE(test_graph->size() == 4);
+  REQUIRE(test_graph->getEdgeList().size() == 4);
+  delete test_graph;
+}
+
+TEST_CASE("Test Remove Multiple Verticies", "[valgrind][RemoveVertex][size]") {
+  Graph* test_graph = new Graph();
+  test_graph->addDataFromFile("tests/test_data/traversal2_dat.csv");
+  Graph::VertexData* to_remove = test_graph->getVertex(4);
+  test_graph->removeVertex(to_remove);
+  REQUIRE(test_graph->size() == 4);
+  REQUIRE(test_graph->getEdgeList().size() == 4);
+
+  Graph::VertexData* second_to_remove = test_graph->getVertex(2);
+  test_graph->removeVertex(second_to_remove);
+  
+  REQUIRE(test_graph->size() == 3);
+  REQUIRE(test_graph->getEdgeList().size() == 2);
+
+  Graph::VertexData* third_to_remove = test_graph->getVertex(3);
+  test_graph->removeVertex(third_to_remove);
+
+  REQUIRE(test_graph->size() == 2);
+  REQUIRE(test_graph->getEdgeList().size() == 1);
+
+  delete test_graph;
+}

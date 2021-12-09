@@ -3,11 +3,14 @@
 #include <fstream>
 #include <iostream>
 #include <list>
+#include <limits>
 #include <map>
 #include <regex>
 #include <string>
 #include <sstream>
 #include <vector>
+
+#include <boost/heap/fibonacci_heap.hpp>
 
 /**
  * Class representing a Graph
@@ -69,6 +72,9 @@ public:
     // Optional label for use in Graph Traversals (default is Unexplored)
     Label label = kUnexplored;
 
+    // Optional double for use in Dijkstra's to track distance
+    double distance_ = std::numeric_limits<double>::infinity();
+
     /**
      * Constructor
      *
@@ -79,7 +85,17 @@ public:
       station_ = station;
       adjacent_edges_ = adjacent_edges;
     }
+
+    bool isAdjacentVertex(VertexData* other_vertex) const;
   };
+
+  struct compareVertex {
+    bool operator() (const VertexData*& vertex_one, const VertexData*& vertex_two) const {
+      return vertex_one->distance_ <= vertex_two->distance_;
+    }
+  };
+
+  void printGraph(Graph* g);
 
   /**
    * Struct representing an Edge in the Graph
@@ -116,6 +132,8 @@ public:
       return ((start_vertex_->station_.id_ == rhs.start_vertex_->station_.id_) && (end_vertex_->station_.id_ == rhs.end_vertex_->station_.id_)) 
           ||((start_vertex_->station_.id_ == rhs.end_vertex_->station_.id_) && (end_vertex_->station_.id_ == rhs.start_vertex_->station_.id_));
     }
+
+    VertexData* getOtherVertex(VertexData* vertex) const;
   };
 
 
@@ -167,6 +185,8 @@ public:
    */
   void insertEdge(VertexData* vertex_one, VertexData* vertex_two);
 
+  void removeVertex(VertexData* to_remove);
+
   /**
    * Adds data from the given file to the Graph
    *
@@ -209,6 +229,14 @@ public:
    * @return 0 if not Eulerian, 1 if has a Eulerian path, 2 if has a Eulerian cycle
    */
   int isEulerian(); 
+
+  Graph Dijkstras(VertexData* starting_vertex);
+
+  // hamiltonian cycle helper
+  void getHamiltonianCycle(VertexData* current_vertex, Graph* full_graph, Graph* hamiltonian, VertexData* starting_vertex, 
+      std::vector<Graph*> hamiltonians);
+
+  size_t size() const;
 
 private:
   /**

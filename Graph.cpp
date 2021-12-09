@@ -1,7 +1,27 @@
 #include "Graph.h"
 #include "DFS.h"
 
+bool Graph::VertexData::isAdjacentVertex(VertexData* other_vertex) const {
+  for (Edge* edge : adjacent_edges_) {
+    if ((edge->start_vertex_ == other_vertex) || (edge->end_vertex_ == other_vertex)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// WARNING: if given vertex is not an endpoint of the edge this function will return the 
+// start vertex
+Graph::VertexData* Graph::Edge::getOtherVertex(VertexData* vertex) const {
+  if (start_vertex_ != vertex) {
+    return start_vertex_;
+  } else {
+    return end_vertex_;
+  }
+}
+
 Graph::~Graph() {
+   // std::cout << "destroying" << std::endl;
   destroy();
 }
 
@@ -216,4 +236,80 @@ int Graph::isEulerian() {
   // odd count is 0, meaning graph has Eulerian Cycle
   // odd count cannot be 1 for undirected graph
   return 2;
+}
+/*
+Graph Graph::Dijkstras(Graph::VertexData* starting_vertex) {
+  boost::heap::fibonacci_heap<VertexData*, boost::heap::compare<compareVertex>> priority_queue;
+  std::map<int, VertexData*> previous_verticies_map;
+  for (std::pair<int, Graph::VertexData*> vertex : vertexes_) {
+    previous_verticies_map[vertex.first] = nullptr;
+    vertex.second->distance_ = std::numeric_limits<double>::infinity();
+    const VertexData* copy = vertex.second;
+    priority_queue.push(copy);
+  }
+  starting_vertex->distance_ = 0;
+  
+  Graph minimum_spanning_tree;
+
+  while (priority_queue.top() != starting_vertex) {
+    break;
+  }
+
+  return Graph();
+}
+*/
+
+void Graph::removeVertex(Graph::VertexData* to_remove) {
+  if (to_remove == nullptr) {
+    return;
+  }
+  // delete all adjacent edges of the vertex
+  while (!(to_remove->adjacent_edges_.empty())) {
+    edges_.remove(to_remove->adjacent_edges_.front());
+    Graph::VertexData* other_vertex = to_remove->adjacent_edges_.front()->getOtherVertex(to_remove);
+    other_vertex->adjacent_edges_.remove(to_remove->adjacent_edges_.front());
+    delete to_remove->adjacent_edges_.front();
+    to_remove->adjacent_edges_.pop_front();
+  }
+
+  // delete the vertex
+  vertexes_.erase(to_remove->station_.id_);
+  delete to_remove;
+}
+
+
+size_t Graph::size() const {
+  return vertexes_.size();
+}
+/*
+void Graph::getHamiltonianCycle(Graph::VertexData* current_vertex, Graph* full_graph, Graph* hamiltonian, 
+    Graph::VertexData* starting_vertex, std::vector<Graph*> hamiltonians) {
+      std::cout << "here: " << current_vertex->station_.id_ << " size: " << hamiltonian->size() << std::endl;
+  if (hamiltonian->size() == full_graph->size()) {
+    std::cout << "required met: " << std::endl;
+    if (current_vertex->isAdjacentVertex(starting_vertex)) {
+      hamiltonian->insertEdge(current_vertex, starting_vertex);
+      hamiltonians.push_back(hamiltonian);
+      printGraph(hamiltonian);
+    }
+  }
+  for (Edge* edge : current_vertex->adjacent_edges_) {
+    VertexData* other_vertex = edge->getOtherVertex(current_vertex);
+    std::cout << "edge: " << current_vertex->station_.id_ << "->" << other_vertex->station_.id_ << std::endl;
+    if (other_vertex->label != Graph::Label::kVisited) {
+      std::cout << "new edge" << std::endl;
+      other_vertex->label = Graph::Label::kVisited;
+      hamiltonian->insertVertex(other_vertex->station_);
+      hamiltonian->insertEdge(current_vertex, other_vertex);
+      getHamiltonianCycle(other_vertex, full_graph, hamiltonian, starting_vertex, hamiltonians);
+      other_vertex->label = Graph::Label::kUnexplored;
+      hamiltonian->removeVertex(other_vertex);
+    }
+  }
+}
+*/
+void Graph::printGraph(Graph* g) {
+  for (Edge* edge : g->getEdgeList()) {
+    std::cout << "edge: " << edge->start_vertex_->station_.id_ << "->" << edge->end_vertex_->station_.id_ << std::endl;
+  }
 }

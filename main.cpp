@@ -19,5 +19,6 @@ int main(int argc, char** argv) {
   std::cout << "graph created successfully" << std::endl;
   
   std::cout << "result is eulerian: " << graph->isEulerian() << std::endl;
+  std::cout << "result is connected" << graph->isConnected() << std::endl;
   return 0;
 }
