@@ -512,6 +512,10 @@ TEST_CASE("Repeated Edges", "[valgrind][dataFromFile]") {
    REQUIRE((*(second_vertex->adjacent_edges_.front()) == expected_edge_a));
 }
 
+/**
+ * Test DFS Traversal
+ */
+
 TEST_CASE("Test Basic DFS Traversal", "[valgrind][DFS]") {
   Graph* test_graph = new Graph();
   test_graph->addDataFromFile("tests/test_data/traversal1_dat.csv");
@@ -577,6 +581,10 @@ TEST_CASE("Unconnected Zero Degree Non-Eulerian Graph",
   REQUIRE_FALSE(non_eulerian.isConnected());
   REQUIRE(non_eulerian.isEulerian() == 0);
 }
+
+/**
+ * Test for connectivity and euler path/circuit
+ */
 
 TEST_CASE("Euler Path Plus Unconnected Vertex", "[valgrind][checkConnected][checkEulerian]") {
   Graph::Station test_station_0 = Graph::Station(0, 0, 0);
@@ -730,6 +738,9 @@ TEST_CASE("Multiple Eulerian Cycles", "[valgrind][checkConnected][checkEulerian]
   REQUIRE(eulerian_cycle.isEulerian() == 2);
 }
 
+/**
+ * Test Hamiltonian Cycle
+ */
 
 TEST_CASE("Simple Hamiltonian Cycle", "[valgrind][HamiltonianCycle]") {
   Graph* test_graph = new Graph();
