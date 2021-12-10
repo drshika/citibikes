@@ -249,14 +249,14 @@ public:
   /**
    * Helper to return the northwest most station on the map
    * 
-   * @return a map representing the vertex map of the graph (Key: station id, Value: Vertex of station with the given key's id)
+   * @return a vertex largest latitude and smallest longitude
    */
   VertexData* northwestMost();
 
   /**
    * Helper to return the southeast most station on the map
    * 
-   * @return a map representing the vertex map of the graph (Key: station id, Value: Vertex of station with the given key's id)
+   * @return a vertex with the smallest latitude and largest longitude
    */
   VertexData* southeastMost();
 
