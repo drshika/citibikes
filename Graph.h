@@ -29,6 +29,13 @@ public:
   enum Label {kVisited, kUnexplored, kDiscovery, kBack};
 
   struct Edge;
+  struct VertexData;
+
+  struct compareVertex {
+    bool operator() (VertexData* vertex_one, VertexData* vertex_two) const {
+      return vertex_one->distance_ >= vertex_two->distance_;
+    }
+  };
 
   /**
    * Struct storing a Station's Data
@@ -87,12 +94,8 @@ public:
     }
 
     bool isAdjacentVertex(VertexData* other_vertex) const;
-  };
 
-  struct compareVertex {
-    bool operator() (const VertexData*& vertex_one, const VertexData*& vertex_two) const {
-      return vertex_one->distance_ <= vertex_two->distance_;
-    }
+    boost::heap::fibonacci_heap<VertexData*, boost::heap::compare<compareVertex>>::handle_type handle;
   };
 
   void printGraph(Graph g);

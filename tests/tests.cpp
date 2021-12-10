@@ -751,6 +751,14 @@ TEST_CASE("Test Graph With Hamiltonian Cycles Of Multiple Weights", "[valgrind][
   delete test_graph;
 }
 
+TEST_CASE("Graph Without Hamiltonian Cycle", "[valgrind][HamiltonianCycle]") {
+   Graph* test_graph = new Graph();
+  test_graph->addDataFromFile("tests/test_data/non_hamiltonian_dat.csv");
+  Graph* largest_hamiltonian_ = test_graph->getLargestHamiltonianCycle();
+  REQUIRE(largest_hamiltonian_ == nullptr);
+  delete test_graph; 
+}
+
 TEST_CASE("Test Remove Vertex Without Edges", "[valgrind][RemoveVertex][size]") {
   Graph* test_graph = new Graph();
   Graph::Station test_station = Graph::Station(0, 0, 0);
@@ -846,3 +854,57 @@ TEST_CASE("Total Distance 0 After All Edges Removed", "[valgrind][EdgeDistance]"
   delete test_graph;
 }
 
+TEST_CASE("Test Basic Dijkstra's", "[valgrind][Dijkstras]") {
+  Graph* test_graph = new Graph();
+  test_graph->addDataFromFile("tests/test_data/dijkstra1_dat.csv");
+
+  Graph::VertexData* first = test_graph->getVertex(0);
+
+  Graph result = test_graph->Dijkstras(first);
+  REQUIRE(result.size() == 4);
+  REQUIRE(result.getEdgeList().size() == 3);
+
+  Graph::VertexData* second = test_graph->getVertex(1);
+  Graph::VertexData* third = test_graph->getVertex(2);
+  Graph::VertexData* fourth = test_graph->getVertex(3);
+
+  Graph::Edge first_edge = Graph::Edge(first, third);
+  Graph::Edge second_edge = Graph::Edge(first, fourth);
+  Graph::Edge third_edge = Graph::Edge(first, second);
+  
+  std::vector<Graph::Edge> expected_edges = {third_edge, second_edge, first_edge};
+  for (Graph::Edge* edge : result.getEdgeList()) {
+    REQUIRE((*edge == expected_edges.back()));
+    expected_edges.pop_back();
+  }
+  delete test_graph;
+}
+
+TEST_CASE("Test Dijkstra's", "[valgrind][Dijkstras][tiebreak]") {
+  Graph* test_graph = new Graph();
+  test_graph->addDataFromFile("tests/test_data/dijkstra2_dat.csv");
+
+  Graph::VertexData* first = test_graph->getVertex(4);
+
+  Graph result = test_graph->Dijkstras(first);
+
+  REQUIRE(result.size() == 5);
+  REQUIRE(result.getEdgeList().size() == 4);
+
+  Graph::VertexData* second = test_graph->getVertex(0);
+  Graph::VertexData* third = test_graph->getVertex(1);
+  Graph::VertexData* fourth = test_graph->getVertex(2);
+  Graph::VertexData* fifth = test_graph->getVertex(3);
+
+  Graph::Edge first_edge = Graph::Edge(first, third);
+  Graph::Edge second_edge = Graph::Edge(first, second);
+  Graph::Edge third_edge = Graph::Edge(third, fourth);
+  Graph::Edge fourth_edge = Graph::Edge(third, fifth);
+  
+  std::vector<Graph::Edge> expected_edges = {fourth_edge, third_edge, second_edge, first_edge};
+  for (Graph::Edge* edge : result.getEdgeList()) {
+    REQUIRE((*edge == expected_edges.back()));
+    expected_edges.pop_back();
+  }
+  delete test_graph;
+}

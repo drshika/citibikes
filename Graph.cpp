@@ -1,5 +1,6 @@
 #include "Graph.h"
 #include "DFS.h"
+#include <cmath>
 #include <limits.h>
 
 bool Graph::VertexData::isAdjacentVertex(VertexData* other_vertex) const {
@@ -251,27 +252,47 @@ int Graph::isEulerian() {
   return 2;
 }
 
-/*
+
 Graph Graph::Dijkstras(Graph::VertexData* starting_vertex) {
   boost::heap::fibonacci_heap<VertexData*, boost::heap::compare<compareVertex>> priority_queue;
+
   std::map<int, VertexData*> previous_verticies_map;
   for (std::pair<int, Graph::VertexData*> vertex : vertexes_) {
     previous_verticies_map[vertex.first] = nullptr;
     vertex.second->distance_ = std::numeric_limits<double>::infinity();
-    const VertexData* copy = vertex.second;
-    priority_queue.push(copy);
+    vertex.second->handle = priority_queue.push(vertex.second);
   }
-  starting_vertex->distance_ = 0;
-  
+
   Graph minimum_spanning_tree;
+  starting_vertex->distance_ = 0;
+  priority_queue.update(starting_vertex->handle, starting_vertex);
 
-  while (priority_queue.top() != starting_vertex) {
-    break;
+
+  while (priority_queue.empty() == false) {
+    VertexData* current_vertex = priority_queue.top();
+    priority_queue.pop();
+    minimum_spanning_tree.insertVertex(current_vertex->station_);
+    VertexData* created_vertex = minimum_spanning_tree.getVertex(current_vertex->station_.id_);
+    VertexData* previous_vertex = previous_verticies_map[current_vertex->station_.id_];
+    if (previous_vertex != nullptr) {
+      minimum_spanning_tree.insertEdge(created_vertex, previous_vertex);
+    }
+    for (Edge* edge : current_vertex->adjacent_edges_) {
+      VertexData* other_vertex = edge->getOtherVertex(current_vertex);
+      if (other_vertex->label == Graph::Label::kVisited) {
+        continue;
+      }
+      if (edge->getEdgeDistance() + current_vertex->distance_ < other_vertex->distance_) {
+        other_vertex->distance_ = edge->getEdgeDistance() + current_vertex->distance_;
+        previous_verticies_map[other_vertex->station_.id_] = created_vertex;
+        priority_queue.update(other_vertex->handle, other_vertex);
+      }
+    }
+    current_vertex->label = Graph::Label::kVisited;
   }
-
-  return Graph();
+  return minimum_spanning_tree;
 }
-*/
+
 
 void Graph::removeVertex(Graph::VertexData* to_remove) {
   if (to_remove == nullptr) {

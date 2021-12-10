@@ -2,6 +2,7 @@
 #include "Graph.cpp"
 #include "DFS.h"
 #include "DFS.cpp"
+#include <cmath>
 #include <iostream>
 #include <vector>
 
@@ -20,5 +21,9 @@ int main(int argc, char** argv) {
   
   std::cout << "result is eulerian: " << graph->isEulerian() << std::endl;
   std::cout << "result is connected" << graph->isConnected() << std::endl;
+
+  std::cout << "finding largest hamiltonian ..." << std::endl;
+  Graph* largest_hamiltonian = graph->getLargestHamiltonianCycle();
+  std::cout << "found" << std::endl;
   return 0;
 }
