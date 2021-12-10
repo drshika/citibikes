@@ -21,6 +21,12 @@ Graph::VertexData* Graph::Edge::getOtherVertex(VertexData* vertex) const {
   }
 }
 
+double Graph::Edge::getEdgeDistance() const {
+  double latitude_difference = start_vertex_->station_.latitude_ - end_vertex_->station_.latitude_;
+  double longitude_difference = start_vertex_->station_.longitude_ - end_vertex_->station_.longitude_;
+  return std::sqrt((latitude_difference * latitude_difference) + (longitude_difference * longitude_difference));
+}
+
 Graph::~Graph() {
   destroy();
 }
@@ -51,6 +57,9 @@ void Graph::copy(const Graph& other) {
 
 void Graph::destroy() {
   // delete each vertex's allocated adjacent edge list (not the edges)
+  if (vertexes_.empty()) {
+    return;
+  }
   for (std::pair<int, VertexData*> element : vertexes_) {
    VertexData* to_delete = element.second;
    delete to_delete;
@@ -59,6 +68,9 @@ void Graph::destroy() {
   for (Edge* edge : edges_) {
     delete edge;
   } 
+  if (largest_hamiltonian_ != nullptr) {
+    delete largest_hamiltonian_;
+  }
 }
 
 void Graph::insertVertex(Station station_to_add) {
@@ -108,6 +120,7 @@ void Graph::insertEdge(VertexData* vertex_one, VertexData* vertex_two) {
   vertex_one->adjacent_edges_.push_back(new_edge);
   vertex_two->adjacent_edges_.push_back(new_edge);
   edges_.push_back(new_edge);
+  total_distance_ += new_edge->getEdgeDistance();
 }
 
 
@@ -266,6 +279,7 @@ void Graph::removeVertex(Graph::VertexData* to_remove) {
   }
   // delete all adjacent edges of the vertex
   while (!(to_remove->adjacent_edges_.empty())) {
+    total_distance_ -= to_remove->adjacent_edges_.front()->getEdgeDistance();
     edges_.remove(to_remove->adjacent_edges_.front());
     Graph::VertexData* other_vertex = to_remove->adjacent_edges_.front()->getOtherVertex(to_remove);
     other_vertex->adjacent_edges_.remove(to_remove->adjacent_edges_.front());
@@ -283,39 +297,53 @@ size_t Graph::size() const {
   return vertexes_.size();
 }
 
-void Graph::getHamiltonianCycle(Graph::VertexData* current_hamiltonian_vertex, Graph* full_graph, Graph* hamiltonian, 
-    Graph::VertexData* current_graph_vertex, std::vector<Graph*> hamiltonians, Graph::VertexData* start_vertex,
+Graph* Graph::getLargestHamiltonianCycle() {
+  // label all verticies as unexplored
+  for (std::pair<int, Graph::VertexData*> vertex : vertexes_) {
+    vertex.second->label = Graph::Label::kUnexplored;
+  }
+  
+  Graph::VertexData* start = getVertex(vertexes_.begin()->second->station_.id_);
+  start->label = Graph::Label::kVisited;
+  Graph* hamiltonian = new Graph();
+  hamiltonian->insertVertex(start->station_);
+  Graph::VertexData* hamiltonian_start = hamiltonian->getVertex(vertexes_.begin()->second->station_.id_);
+  getHamiltonianCycle(hamiltonian_start, hamiltonian, start, start, hamiltonian_start);
+  delete hamiltonian;
+  return largest_hamiltonian_;
+}
+
+void Graph::updateLargestHamiltonain(Graph* to_check) {
+  if (largest_hamiltonian_ == nullptr) {
+    largest_hamiltonian_ = new Graph(*to_check);
+  } else if (to_check->getTotalDistance() > largest_hamiltonian_->getTotalDistance()) {
+    delete largest_hamiltonian_;
+    largest_hamiltonian_ = nullptr;
+    largest_hamiltonian_ = new Graph(*to_check);
+  } 
+}
+
+void Graph::getHamiltonianCycle(Graph::VertexData* current_hamiltonian_vertex, Graph* hamiltonian, 
+    Graph::VertexData* current_graph_vertex, Graph::VertexData* start_vertex,
     Graph::VertexData* hamiltonian_start) {
-  //    std::cout << "here: " << current_vertex->station_.id_ << " size: " << hamiltonian->size() << std::endl;
-  if (hamiltonian->size() == full_graph->size()) {
- //   std::cout << "required met: " << std::endl;
+  if (hamiltonian->size() == size()) {
     if (current_graph_vertex->isAdjacentVertex(start_vertex)) {
       hamiltonian->insertEdge(hamiltonian_start, current_hamiltonian_vertex);
-      hamiltonians.push_back(hamiltonian);
-      printGraph(hamiltonian);
+      updateLargestHamiltonain(hamiltonian);
     }
   }
   for (Edge* edge : current_graph_vertex->adjacent_edges_) {
     VertexData* other_vertex = edge->getOtherVertex(current_graph_vertex);
-  //  std::cout << "edge: " << current_graph_vertex->station_.id_ << "->" << other_vertex->station_.id_ << std::endl;
     if (other_vertex->label != Graph::Label::kVisited) {
-     // std::cout << "new edge" << std::endl;
       other_vertex->label = Graph::Label::kVisited;
       hamiltonian->insertVertex(other_vertex->station_);
       VertexData* hamiltonian_other_vertex = hamiltonian->getVertex(other_vertex->station_.id_);
       hamiltonian->insertEdge(current_hamiltonian_vertex, hamiltonian_other_vertex);
-      getHamiltonianCycle(hamiltonian_other_vertex, full_graph, hamiltonian, other_vertex, hamiltonians, start_vertex,
+      getHamiltonianCycle(hamiltonian_other_vertex, hamiltonian, other_vertex, start_vertex,
         hamiltonian_start);
       other_vertex->label = Graph::Label::kUnexplored;
       hamiltonian->removeVertex(hamiltonian_other_vertex);
     }
-  }
-}
-
-void Graph::printGraph(Graph* g) {
-  std::cout << "GRAPH" << std::endl;
-  for (Edge* edge : g->getEdgeList()) {
-    std::cout << "edge: " << edge->start_vertex_->station_.id_ << "->" << edge->end_vertex_->station_.id_ << std::endl;
   }
 }
 
@@ -353,4 +381,8 @@ Graph::VertexData * Graph::southeastMost() {
     }
   }
   return to_return;
+}
+
+double Graph::getTotalDistance() const {
+  return total_distance_;
 }

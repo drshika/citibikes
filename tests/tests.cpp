@@ -195,8 +195,8 @@ TEST_CASE("Assignment Operator", "[valgrind][big3]") {
   delete expected_edge;
   delete test_graph;
   delete to_assign;
-}*/
-
+}
+*/
 /*
  * Tests for Graph Implementation: 
  *  - Insert Vertex
@@ -731,18 +731,24 @@ TEST_CASE("Multiple Eulerian Cycles", "[valgrind][checkConnected][checkEulerian]
 }
 
 
-TEST_CASE("Test Hamiltonian Cycle (Basic)", "[HamiltonianCycle][valgrind]") {
-  Graph* test = new Graph();
-  test->addDataFromFile("tests/test_data/hamiltonian2_dat.csv");
-  Graph::VertexData* start = test->getVertex(0);
-  start->label = Graph::Label::kVisited;
-  Graph* hamiltonian = new Graph();
-  hamiltonian->insertVertex(start->station_);
-  Graph::VertexData* hamiltonian_start = hamiltonian->getVertex(0);
-  std::vector<Graph*> vert;
-  test->getHamiltonianCycle(hamiltonian_start, test, hamiltonian, start, vert, start, hamiltonian_start);
-  delete test;
-  delete hamiltonian;
+TEST_CASE("Simple Hamiltonian Cycle", "[valgrind][HamiltonianCycle]") {
+  Graph* test_graph = new Graph();
+  test_graph->addDataFromFile("tests/test_data/hamiltonian1_dat.csv");
+  Graph* largest_hamiltonian_ = test_graph->getLargestHamiltonianCycle();
+  REQUIRE(largest_hamiltonian_->size() == 5);
+  REQUIRE(largest_hamiltonian_->getTotalDistance() == Approx(3*std::sqrt(2) + std::sqrt(8) + std::sqrt(18)));
+  REQUIRE(largest_hamiltonian_->getEdgeList().size() == 5);
+  delete test_graph;
+}
+
+TEST_CASE("Test Graph With Hamiltonian Cycles Of Multiple Weights", "[valgrind][HamiltonianCycle]") {
+  Graph* test_graph = new Graph();
+  test_graph->addDataFromFile("tests/test_data/hamiltonian2_dat.csv");
+  Graph* largest_hamiltonian_ = test_graph->getLargestHamiltonianCycle();
+  REQUIRE(largest_hamiltonian_->size() == 7);
+  REQUIRE(largest_hamiltonian_->getTotalDistance() == Approx(672.1485));
+  REQUIRE(largest_hamiltonian_->getEdgeList().size() == 7);
+  delete test_graph;
 }
 
 TEST_CASE("Test Remove Vertex Without Edges", "[valgrind][RemoveVertex][size]") {
@@ -812,5 +818,31 @@ TEST_CASE("Check SoutheastMost", "[Helper]") {
 
   Graph::VertexData * south_e_most = with_data.southeastMost();
   REQUIRE(south_e_most->station_.id_ == 3);
+}
+
+TEST_CASE("Edge & Total Distance", "[EdgeDistance]") {
+  Graph* test_graph = new Graph();
+  test_graph->addDataFromFile("tests/test_data/test_dat1.csv");
+  for (Graph::Edge* edge : test_graph->getEdgeList()) {
+    REQUIRE(edge->getEdgeDistance() == std::sqrt(2));
+  }
+  REQUIRE(test_graph->getTotalDistance() == 2 * std::sqrt(2));
+  delete test_graph;
+}
+
+TEST_CASE("Total Distance Updates After Edge Removal", "[EdgeDistance]") {
+  Graph* test_graph = new Graph();
+  test_graph->addDataFromFile("tests/test_data/test_dat1.csv");
+  test_graph->removeVertex(test_graph->getVertex(0));
+  REQUIRE(test_graph->getTotalDistance() == std::sqrt(2));
+  delete test_graph;
+}
+
+TEST_CASE("Total Distance 0 After All Edges Removed", "[valgrind][EdgeDistance]") {
+  Graph* test_graph = new Graph();
+  test_graph->addDataFromFile("tests/test_data/test_dat1.csv");
+  test_graph->removeVertex(test_graph->getVertex(1));
+  REQUIRE(test_graph->getTotalDistance() == 0);
+  delete test_graph;
 }
 

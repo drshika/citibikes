@@ -95,7 +95,7 @@ public:
     }
   };
 
-  void printGraph(Graph* g);
+  void printGraph(Graph g);
 
   /**
    * Struct representing an Edge in the Graph
@@ -134,6 +134,8 @@ public:
     }
 
     VertexData* getOtherVertex(VertexData* vertex) const;
+
+    double getEdgeDistance() const;
   };
 
 
@@ -216,6 +218,8 @@ public:
    */
   std::list<Edge*> getEdgeList() const;
 
+  double getTotalDistance() const;
+
   /**
    * Determines if graph is connected
    *
@@ -232,9 +236,13 @@ public:
 
   Graph Dijkstras(VertexData* starting_vertex);
 
-void getHamiltonianCycle(Graph::VertexData* current_hamiltonian_vertex, Graph* full_graph, Graph* hamiltonian, 
-    Graph::VertexData* current_graph_vertex, std::vector<Graph*> hamiltonians, Graph::VertexData* start_vertex,
-    Graph::VertexData* hamiltonian_start);
+  Graph* getLargestHamiltonianCycle();
+
+  void updateLargestHamiltonain(Graph* to_check);
+
+  void getHamiltonianCycle(Graph::VertexData* current_hamiltonian_vertex, Graph* hamiltonian, 
+      Graph::VertexData* current_graph_vertex, Graph::VertexData* start_vertex,
+      Graph::VertexData* hamiltonian_start);
 
   size_t size() const;
 
@@ -265,4 +273,10 @@ private:
    * List of Pointers to all the edges in the graph
    */
   std::list<Edge*> edges_;
+
+  Graph* largest_hamiltonian_ = nullptr;
+  // variable to keep track of the total distance (weight of all graph edges combined)
+  double total_distance_ = 0;
+
+  double getEdgeDistance(Edge* edge) const;
 };
