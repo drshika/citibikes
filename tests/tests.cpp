@@ -284,8 +284,8 @@ TEST_CASE("Duplicate Edge", "[valgrind][graphImplementation][addEdge]") {
   Graph::VertexData* vertex_a = test_graph.getVertex(0);
   Graph::VertexData* vertex_b = test_graph.getVertex(1);
 
-  test_graph.insertEdge(vertex_a, vertex_b);
-  test_graph.insertEdge(vertex_a, vertex_b);
+  test_graph.insertEdgeFromData(vertex_a, vertex_b);
+  test_graph.insertEdgeFromData(vertex_a, vertex_b);
 
   std::list<Graph::Edge*> resulting_edges = test_graph.getEdgeList();
 
@@ -771,7 +771,7 @@ TEST_CASE("Test Remove Multiple Verticies", "[valgrind][RemoveVertex][size]") {
 }
 
 /**
- * Test find Northwest Most Station
+ * Test find Northwest Most & Southeast Most Stations
  */
 TEST_CASE("Check NorthwestMost", "[NorthwestMost]") {
   Graph with_data;
