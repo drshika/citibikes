@@ -283,8 +283,15 @@ public:
    * Finds the minimum spanning tree of the Graph using Dijkstras Algorithm
    *
    * @param starting_vertex a pointer to the vertex to start Dijkstra's from
-   * @return a Graph representing the MST produced by running Dijkstras from the 
-   *    given vertex
+   * @return a pair representing the result of running Dijkstras strom the provided starting
+   *    vertex
+   *    first: a Graph representing the DAG vertex produced by running Dijkstras on the Graph
+           from the provided starting vertex
+   *    second: a map representing the previous vertex map produced by running Dijkstras on
+   *        the Graph
+   *        Key: int representing the station id of the vertex to find the previous vertex of
+   *        Value: Pointer to the vertex that occurs prior to the given vertex in the MST produced
+   *            by running Dijkstras on the Graph
    */
   std::pair<Graph, std::map<int, VertexData*>> Dijkstras(VertexData* starting_vertex);
 

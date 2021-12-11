@@ -21,12 +21,24 @@ int main(int argc, char** argv) {
     graph->addDataFromFile(kFilePath);
   }
   std::cout << "graph created successfully" << std::endl;
-  
-  // check if the graph is eulerian
-  std::cout << "result is eulerian: " << graph->isEulerian() << std::endl;
-  // check if the graph is connected
-  std::cout << "result is connected: " << graph->isConnected() << std::endl;
 
+  std::cout << "\ngraph results" << std::endl;
+  // check if the graph is connected
+  std::cout << "graph is connected: " << graph->isConnected() << std::endl;
+  std::cout << "graph is eulerian: " << graph->isEulerian() << std::endl;
+
+  // Use DFS to calculate the number of stations and print them
+  std::cout << "DFS traversal:" << std::endl;
+  DFS dfs = DFS(graph, graph->getVertexMap().begin()->second);
+  size_t num_stations = 0;
+  for (auto it = dfs.begin(); it != dfs.end(); ++it) {
+    std::cout << (*it)->station_.id_ << " ";
+    num_stations += 1;
+  }
+  std::cout << std::endl;
+  std::cout << "Number of Stations: " << num_stations << std::endl;
+
+  // find the nortwest most and southeast most station
   Graph::VertexData* starting_vertex = graph->getNorthwestMost();
   std::cout << "northwest most station: " << starting_vertex->station_.id_ << std::endl;
   Graph::VertexData* ending_vertex = graph->getSoutheastMost();
@@ -46,11 +58,13 @@ int main(int argc, char** argv) {
     stations_to_travel.insert(stations_to_travel.begin(), previous->station_.id_);
     previous = previous_verticies_map[previous->station_.id_];
   }
-  stations_to_travel.insert(stations_to_travel.begin(), starting_vertex->station_.id_);
+ // stations_to_travel.insert(stations_to_travel.begin(), starting_vertex->station_.id_);
 
+  // print out the shortest path across NYC produced by Dijkstra's
   std::cout << "shortest station path across NYC: " << std::endl;
   for (const int kStationId : stations_to_travel) {
-    std::cout << kStationId << std::endl;
+    std::cout << kStationId << " ";
   }
+  std::cout << std::endl;
   return 0;
 }

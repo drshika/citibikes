@@ -229,7 +229,6 @@ bool Graph::isConnected() {
   if (verticies_.size() == 0) return false;
 
   // complete dfs traversal
-
   DFS dfs = DFS(this, verticies_.begin()->second);
   for (auto it = dfs.begin(); it != dfs.end(); ++it) {
     // exit early if more than 1 connected components
