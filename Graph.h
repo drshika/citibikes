@@ -286,7 +286,7 @@ public:
    * @return a Graph representing the MST produced by running Dijkstras from the 
    *    given vertex
    */
-  Graph Dijkstras(VertexData* starting_vertex);
+  std::pair<Graph, std::map<int, VertexData*>> Dijkstras(VertexData* starting_vertex);
 
   /**
    * Find the largest (most distance covered) hamiltonian cycle in the graph

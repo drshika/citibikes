@@ -29,11 +29,28 @@ int main(int argc, char** argv) {
 
   Graph::VertexData* starting_vertex = graph->getNorthwestMost();
   std::cout << "northwest most station: " << starting_vertex->station_.id_ << std::endl;
-  std::cout << "southeast most station: " << graph->getSoutheastMost()->station_.id_ << std::endl;
+  Graph::VertexData* ending_vertex = graph->getSoutheastMost();
+  std::cout << "southeast most station: " << ending_vertex->station_.id_ << std::endl;
 
   // start Dijkstras from the nortwest most vertex
-  Graph dijkstras_dag = graph->Dijkstras(starting_vertex);
+  std::pair<Graph, std::map<int, Graph::VertexData*>> dijkstras_result = graph->Dijkstras(starting_vertex);
+  Graph dijkstras_dag = dijkstras_result.first;
   std::cout << "degrees latitude across new york: " << dijkstras_dag.getTotalDistance() << std::endl;
 
+  // find shortest path accross NYC using Dijkstra's result
+  std::map<int, Graph::VertexData*> previous_verticies_map = dijkstras_result.second;
+  Graph::VertexData* previous = previous_verticies_map[ending_vertex->station_.id_];
+  std::vector<int> stations_to_travel;
+  stations_to_travel.insert(stations_to_travel.begin(), ending_vertex->station_.id_);
+  while (previous != nullptr) {
+    stations_to_travel.insert(stations_to_travel.begin(), previous->station_.id_);
+    previous = previous_verticies_map[previous->station_.id_];
+  }
+  stations_to_travel.insert(stations_to_travel.begin(), starting_vertex->station_.id_);
+
+  std::cout << "shortest station path across NYC: " << std::endl;
+  for (const int kStationId : stations_to_travel) {
+    std::cout << kStationId << std::endl;
+  }
   return 0;
 }

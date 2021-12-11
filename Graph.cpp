@@ -264,7 +264,7 @@ int Graph::isEulerian() {
 }
 
 
-Graph Graph::Dijkstras(Graph::VertexData* starting_vertex) {
+std::pair<Graph, std::map<int, Graph::VertexData*>> Graph::Dijkstras(Graph::VertexData* starting_vertex) {
   boost::heap::fibonacci_heap<VertexData*, boost::heap::compare<compareVertex>> priority_queue;
 
   std::map<int, VertexData*> previous_verticies_map;
@@ -304,13 +304,13 @@ Graph Graph::Dijkstras(Graph::VertexData* starting_vertex) {
       // update vertex if this distance is smaller (but not if it is equal)
       if (edge->getEdgeDistance() + current_vertex->distance_ < other_vertex->distance_) {
         other_vertex->distance_ = edge->getEdgeDistance() + current_vertex->distance_;
-        previous_verticies_map[other_vertex->station_.id_] = created_vertex;
+        previous_verticies_map[other_vertex->station_.id_] = current_vertex;
         priority_queue.update(other_vertex->handle, other_vertex);
       }
     }
     current_vertex->label_ = Graph::Label::kVisited;
   }
-  return minimum_spanning_tree;
+  return std::make_pair(minimum_spanning_tree, previous_verticies_map);
 }
 
 void Graph::removeVertex(Graph::VertexData* to_remove) {

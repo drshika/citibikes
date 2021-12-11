@@ -827,7 +827,9 @@ TEST_CASE("Test Basic Dijkstra's", "[valgrind][Dijkstras]") {
 
   Graph::VertexData* first = test_graph->getVertex(0);
 
-  Graph result = test_graph->Dijkstras(first);
+  std::pair<Graph, std::map<int, Graph::VertexData*>> dijkstras_result = test_graph->Dijkstras(first);
+
+  Graph result = dijkstras_result.first;
   REQUIRE(result.size() == 4);
   REQUIRE(result.getEdgeList().size() == 3);
 
@@ -844,6 +846,14 @@ TEST_CASE("Test Basic Dijkstra's", "[valgrind][Dijkstras]") {
     REQUIRE((*edge == expected_edges.back()));
     expected_edges.pop_back();
   }
+
+  for (std::pair<int, Graph::VertexData*> vertex : dijkstras_result.second) {
+    if (vertex.first == 0) {
+      REQUIRE(vertex.second == nullptr);
+    } else  {
+      REQUIRE(vertex.second->station_.id_ == 0);
+    }
+  }
   delete test_graph;
 }
 
@@ -853,7 +863,8 @@ TEST_CASE("Test Dijkstra's", "[valgrind][Dijkstras][Tiebreaks]") {
 
   Graph::VertexData* first = test_graph->getVertex(4);
 
-  Graph result = test_graph->Dijkstras(first);
+  std::pair<Graph, std::map<int, Graph::VertexData*>> dijkstras_result = test_graph->Dijkstras(first);
+  Graph result = dijkstras_result.first;
 
   REQUIRE(result.size() == 5);
   REQUIRE(result.getEdgeList().size() == 4);
@@ -872,6 +883,16 @@ TEST_CASE("Test Dijkstra's", "[valgrind][Dijkstras][Tiebreaks]") {
   for (Graph::Edge* edge : result.getEdgeList()) {
     REQUIRE((*edge == expected_edges.back()));
     expected_edges.pop_back();
+  }
+
+  std::vector<int> expected_previous_stations = {1, 1, 4, 4};
+  for (std::pair<int, Graph::VertexData*> vertex : dijkstras_result.second) {
+    if (vertex.first == 4) {
+      REQUIRE(vertex.second == nullptr);
+    } else  {
+      REQUIRE(vertex.second->station_.id_ == expected_previous_stations.back());
+      expected_previous_stations.pop_back();
+    }
   }
   delete test_graph;
 }
