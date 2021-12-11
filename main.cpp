@@ -21,14 +21,15 @@ int main(int argc, char** argv) {
     graph->addDataFromFile(kFilePath);
   }
   std::cout << "graph created successfully" << std::endl;
-  
-  // check if the graph is eulerian
-  std::cout << "result is eulerian: " << graph->isEulerian() << std::endl;
+
+  std::cout << "\ngraph results" << std::endl;
   // check if the graph is connected
-  std::cout << "result is connected" << graph->isConnected() << std::endl;
+  std::cout << "is connected: " << graph->isConnected() << std::endl;
+  // check if the graph is eulerian
+  std::cout << "is eulerian: " << graph->isEulerian() << std::endl;
 
   // start Dijkstras from the nortwest most vertex
-  Graph::VertexData* startingVertex = graph->northwestMost();
+  Graph::VertexData *startingVertex = graph->getNorthwestMost();
   Graph dijkstras_dag = graph->Dijkstras(startingVertex);
   std::cout << "degrees latitude across new york: " << dijkstras_dag.getTotalDistance() << std::endl;
 
