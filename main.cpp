@@ -25,11 +25,14 @@ int main(int argc, char** argv) {
   // check if the graph is eulerian
   std::cout << "result is eulerian: " << graph->isEulerian() << std::endl;
   // check if the graph is connected
-  std::cout << "result is connected" << graph->isConnected() << std::endl;
+  std::cout << "result is connected: " << graph->isConnected() << std::endl;
+
+  Graph::VertexData* starting_vertex = graph->getNorthwestMost();
+  std::cout << "northwest most station: " << starting_vertex->station_.id_ << std::endl;
+  std::cout << "southeast most station: " << graph->getSoutheastMost()->station_.id_ << std::endl;
 
   // start Dijkstras from the nortwest most vertex
-  Graph::VertexData* startingVertex = graph->northwestMost();
-  Graph dijkstras_dag = graph->Dijkstras(startingVertex);
+  Graph dijkstras_dag = graph->Dijkstras(starting_vertex);
   std::cout << "degrees latitude across new york: " << dijkstras_dag.getTotalDistance() << std::endl;
 
   return 0;

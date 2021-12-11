@@ -197,7 +197,7 @@ public:
 
   /**
    * Inserts a Vertex into the Graph
-   * Accounts for repeated Verticies
+   * Accounts for repeated verticies
    *
    * @param station_to_add a Station to add to the graph
    */
@@ -205,12 +205,22 @@ public:
 
   /**
    * Inserts an Edge into the Graph
-   * Accounts for repeated edges and self-loops
+   * Accounts for self-loops
+   * NOTE: does not account for duplicate edges
    *
    * @param vertex_one a pointer to a vertex representing the starting vertex of the edge
    * @param vertex_two a pointer to a vertex representing the ending vertex of the edge
    */
   void insertEdge(VertexData* vertex_one, VertexData* vertex_two);
+
+  /**
+   * Inserts an Edge into the Graph
+   * Accounts for repeated edges and self-loops (NOTE: this is time expensive)
+   * 
+   * @param vertex_one a pointer to a vertex representing the starting vertex of the edge
+   * @param vertex_two a pointer to a vertex representing the ending vertex of the edge
+   */
+  void insertEdgeFromData(VertexData* vertex_one, VertexData* vertex_two);
 
   /**
    * Removes the given vertex from the graph

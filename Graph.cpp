@@ -106,6 +106,19 @@ void Graph::insertEdge(VertexData* vertex_one, VertexData* vertex_two) {
     return;
   }
   Edge* new_edge = new Edge(vertex_one, vertex_two);
+
+  vertex_one->adjacent_edges_.push_back(new_edge);
+  vertex_two->adjacent_edges_.push_back(new_edge);
+  edges_.push_back(new_edge);
+  total_distance_ += new_edge->getEdgeDistance();
+}
+
+void Graph::insertEdgeFromData(VertexData* vertex_one, VertexData* vertex_two) {
+  // ensure no self-loops are formed
+  if (vertex_one == vertex_two) {
+    return;
+  }
+  Edge* new_edge = new Edge(vertex_one, vertex_two);
   // ensure no duplicate edges are created
   std::list<Edge*> vertex_one_edges = vertex_one->adjacent_edges_;
   for (Edge* edge : vertex_one_edges) {
@@ -207,7 +220,7 @@ void Graph::addDataFromFile(std::string file_path) {
     insertVertex(station_two);
 
     // add edge between the stations (overlap and self loop accounted for in insert edge)
-    insertEdge(verticies_[start_station_id], verticies_[end_station_id]);
+    insertEdgeFromData(verticies_[start_station_id], verticies_[end_station_id]);
   }
 }
 
