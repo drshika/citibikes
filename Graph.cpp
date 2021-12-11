@@ -1,5 +1,6 @@
-#include "Graph.h"
 #include "DFS.h"
+#include "Graph.h"
+
 #include <cmath>
 #include <limits.h>
 
@@ -12,8 +13,6 @@ bool Graph::VertexData::isAdjacentVertex(VertexData* other_vertex) const {
   return false;
 }
 
-// WARNING: if given vertex is not an endpoint of the edge this function will return the 
-// start vertex
 Graph::VertexData* Graph::Edge::getOtherVertex(VertexData* vertex) const {
   if (start_vertex_ != vertex) {
     return start_vertex_;
@@ -46,22 +45,22 @@ Graph& Graph::operator=(const Graph& rhs) {
 }
 
 void Graph::copy(const Graph& other) {
-  for (std::pair<int, VertexData*> vertex : other.vertexes_) {
+  for (std::pair<int, VertexData*> vertex : other.verticies_) {
    insertVertex(vertex.second->station_);
   }
   for (Edge* edge : other.edges_) {
-    VertexData* vertex_one = vertexes_[edge->start_vertex_->station_.id_];
-    VertexData* vertex_two = vertexes_[edge->end_vertex_->station_.id_];
+    VertexData* vertex_one = verticies_[edge->start_vertex_->station_.id_];
+    VertexData* vertex_two = verticies_[edge->end_vertex_->station_.id_];
     insertEdge(vertex_one, vertex_two);
   }
 }
 
 void Graph::destroy() {
   // delete each vertex's allocated adjacent edge list (not the edges)
-  if (vertexes_.empty()) {
+  if (verticies_.empty()) {
     return;
   }
-  for (std::pair<int, VertexData*> element : vertexes_) {
+  for (std::pair<int, VertexData*> element : verticies_) {
    VertexData* to_delete = element.second;
    delete to_delete;
   }
@@ -76,18 +75,17 @@ void Graph::destroy() {
 
 void Graph::insertVertex(Station station_to_add) {
   // don't allow repeated vertexes (or else there will be a memory leak)
-  auto to_return_iter = vertexes_.find(station_to_add.id_);
-  if (to_return_iter != vertexes_.end()) {
+  auto to_return_iter = verticies_.find(station_to_add.id_);
+  if (to_return_iter != verticies_.end()) {
     return;
   }
   std::list<Edge*> adjacent_edges_;
-  vertexes_[station_to_add.id_] = new VertexData(station_to_add, adjacent_edges_);
+  verticies_[station_to_add.id_] = new VertexData(station_to_add, adjacent_edges_);
 }
 
-
 Graph::VertexData* Graph::getVertex(int station_id) {
-  auto to_return_iter = vertexes_.find(station_id);
-  if (to_return_iter == vertexes_.end()) {
+  auto to_return_iter = verticies_.find(station_id);
+  if (to_return_iter == verticies_.end()) {
     return nullptr;
   } else {
     return to_return_iter->second;
@@ -95,7 +93,7 @@ Graph::VertexData* Graph::getVertex(int station_id) {
 }
 
 std::map<int, Graph::VertexData*> Graph::getVertexMap() const {
-  return vertexes_;
+  return verticies_;
 }
 
 std::list<Graph::Edge*> Graph::getEdgeList() const {
@@ -209,17 +207,17 @@ void Graph::addDataFromFile(std::string file_path) {
     insertVertex(station_two);
 
     // add edge between the stations (overlap and self loop accounted for in insert edge)
-    insertEdge(vertexes_[start_station_id], vertexes_[end_station_id]);
+    insertEdge(verticies_[start_station_id], verticies_[end_station_id]);
   }
 }
 
 bool Graph::isConnected() {
   // graph with no vertexes is not connected
-  if (vertexes_.size() == 0) return false;
+  if (verticies_.size() == 0) return false;
 
   // complete dfs traversal
 
-  DFS dfs = DFS(this, vertexes_.begin()->second);
+  DFS dfs = DFS(this, verticies_.begin()->second);
   for (auto it = dfs.begin(); it != dfs.end(); ++it) {
     // exit early if more than 1 connected components
     if (dfs.getNumConnectedComponents() != 1) return false;
@@ -235,7 +233,7 @@ int Graph::isEulerian() {
   // count number of vertices with odd degree
   int odd_count = 0;
   std::map<int, VertexData*>::iterator it;
-  for (it = vertexes_.begin(); it != vertexes_.end(); it++) {
+  for (it = verticies_.begin(); it != verticies_.end(); it++) {
     if (it->second->adjacent_edges_.size() % 2 == 1) {
       ++odd_count;
     }
@@ -257,42 +255,50 @@ Graph Graph::Dijkstras(Graph::VertexData* starting_vertex) {
   boost::heap::fibonacci_heap<VertexData*, boost::heap::compare<compareVertex>> priority_queue;
 
   std::map<int, VertexData*> previous_verticies_map;
-  for (std::pair<int, Graph::VertexData*> vertex : vertexes_) {
+
+  // Mark all verticies as unexplored, set all previous verticies to nullptr, 
+  // and set all distances to +inf
+  for (std::pair<int, Graph::VertexData*> vertex : verticies_) {
+    vertex.second->label_ = Graph::Label::kUnexplored;
     previous_verticies_map[vertex.first] = nullptr;
     vertex.second->distance_ = std::numeric_limits<double>::infinity();
     vertex.second->handle = priority_queue.push(vertex.second);
   }
 
   Graph minimum_spanning_tree;
+  // set starting vertex distance to 0 and update the priority queue
   starting_vertex->distance_ = 0;
   priority_queue.update(starting_vertex->handle, starting_vertex);
 
-
   while (priority_queue.empty() == false) {
+    // insert current vertex into the MST and update the priority queue
     VertexData* current_vertex = priority_queue.top();
     priority_queue.pop();
     minimum_spanning_tree.insertVertex(current_vertex->station_);
     VertexData* created_vertex = minimum_spanning_tree.getVertex(current_vertex->station_.id_);
+    // NOTE: this is done because previous vertex must correspond with the current graph (not MST graph)
     VertexData* previous_vertex = previous_verticies_map[current_vertex->station_.id_];
+
     if (previous_vertex != nullptr) {
       minimum_spanning_tree.insertEdge(created_vertex, previous_vertex);
     }
+
     for (Edge* edge : current_vertex->adjacent_edges_) {
       VertexData* other_vertex = edge->getOtherVertex(current_vertex);
-      if (other_vertex->label == Graph::Label::kVisited) {
+      if (other_vertex->label_ == Graph::Label::kVisited) {
         continue;
       }
+      // update vertex if this distance is smaller (but not if it is equal)
       if (edge->getEdgeDistance() + current_vertex->distance_ < other_vertex->distance_) {
         other_vertex->distance_ = edge->getEdgeDistance() + current_vertex->distance_;
         previous_verticies_map[other_vertex->station_.id_] = created_vertex;
         priority_queue.update(other_vertex->handle, other_vertex);
       }
     }
-    current_vertex->label = Graph::Label::kVisited;
+    current_vertex->label_ = Graph::Label::kVisited;
   }
   return minimum_spanning_tree;
 }
-
 
 void Graph::removeVertex(Graph::VertexData* to_remove) {
   if (to_remove == nullptr) {
@@ -307,29 +313,30 @@ void Graph::removeVertex(Graph::VertexData* to_remove) {
     delete to_remove->adjacent_edges_.front();
     to_remove->adjacent_edges_.pop_front();
   }
-
   // delete the vertex
-  vertexes_.erase(to_remove->station_.id_);
+  verticies_.erase(to_remove->station_.id_);
   delete to_remove;
 }
 
-
 size_t Graph::size() const {
-  return vertexes_.size();
+  return verticies_.size();
 }
 
 Graph* Graph::getLargestHamiltonianCycle() {
   // label all verticies as unexplored
-  for (std::pair<int, Graph::VertexData*> vertex : vertexes_) {
-    vertex.second->label = Graph::Label::kUnexplored;
+  for (std::pair<int, Graph::VertexData*> vertex : verticies_) {
+    vertex.second->label_ = Graph::Label::kUnexplored;
   }
   
-  Graph::VertexData* start = getVertex(vertexes_.begin()->second->station_.id_);
-  start->label = Graph::Label::kVisited;
+  Graph::VertexData* start = getVertex(verticies_.begin()->second->station_.id_);
+  start->label_ = Graph::Label::kVisited;
+
   Graph* hamiltonian = new Graph();
   hamiltonian->insertVertex(start->station_);
-  Graph::VertexData* hamiltonian_start = hamiltonian->getVertex(vertexes_.begin()->second->station_.id_);
+  Graph::VertexData* hamiltonian_start = hamiltonian->getVertex(verticies_.begin()->second->station_.id_);
+
   getHamiltonianCycle(hamiltonian_start, hamiltonian, start, start, hamiltonian_start);
+
   delete hamiltonian;
   return largest_hamiltonian_;
 }
@@ -337,6 +344,7 @@ Graph* Graph::getLargestHamiltonianCycle() {
 void Graph::updateLargestHamiltonain(Graph* to_check) {
   if (largest_hamiltonian_ == nullptr) {
     largest_hamiltonian_ = new Graph(*to_check);
+
   } else if (to_check->getTotalDistance() > largest_hamiltonian_->getTotalDistance()) {
     delete largest_hamiltonian_;
     largest_hamiltonian_ = nullptr;
@@ -345,59 +353,61 @@ void Graph::updateLargestHamiltonain(Graph* to_check) {
 }
 
 void Graph::getHamiltonianCycle(Graph::VertexData* current_hamiltonian_vertex, Graph* hamiltonian, 
-    Graph::VertexData* current_graph_vertex, Graph::VertexData* start_vertex,
+    Graph::VertexData* current_graph_vertex, Graph::VertexData* start_vertex, 
     Graph::VertexData* hamiltonian_start) {
   if (hamiltonian->size() == size()) {
+    // Only a hamiltonian Cycle if last vertex is adjacent to the start vertex
     if (current_graph_vertex->isAdjacentVertex(start_vertex)) {
       hamiltonian->insertEdge(hamiltonian_start, current_hamiltonian_vertex);
       updateLargestHamiltonain(hamiltonian);
     }
   }
+  // backtrace
   for (Edge* edge : current_graph_vertex->adjacent_edges_) {
     VertexData* other_vertex = edge->getOtherVertex(current_graph_vertex);
-    if (other_vertex->label != Graph::Label::kVisited) {
-      other_vertex->label = Graph::Label::kVisited;
+    if (other_vertex->label_ != Graph::Label::kVisited) {
+      other_vertex->label_ = Graph::Label::kVisited;
       hamiltonian->insertVertex(other_vertex->station_);
       VertexData* hamiltonian_other_vertex = hamiltonian->getVertex(other_vertex->station_.id_);
       hamiltonian->insertEdge(current_hamiltonian_vertex, hamiltonian_other_vertex);
       getHamiltonianCycle(hamiltonian_other_vertex, hamiltonian, other_vertex, start_vertex,
         hamiltonian_start);
-      other_vertex->label = Graph::Label::kUnexplored;
+      other_vertex->label_ = Graph::Label::kUnexplored;
       hamiltonian->removeVertex(hamiltonian_other_vertex);
     }
   }
 }
 
-Graph::VertexData * Graph::northwestMost() {
+Graph::VertexData* Graph::getNorthwestMost() {
   std::map<int, VertexData*>::iterator it;
-  int lat = -1;
-  int longi = INT_MAX;
-  Graph::VertexData * to_return;
+  int latitude = -1;
+  int longitude = INT_MAX;
+  Graph::VertexData* to_return;
 
-  for (it = vertexes_.begin(); it != vertexes_.end(); it++) { //
+  for (it = verticies_.begin(); it != verticies_.end(); it++) { //
     Graph::Station * station = &it->second->station_;
     //northwest most means that the latitude is the greatest and the longitude is the smallest
-    if (station->longitude_ <= longi && station->latitude_ >= lat) {
-      lat = station->latitude_;
-      longi = station->longitude_;
+    if (station->longitude_ <= longitude && station->latitude_ >= latitude) {
+      latitude = station->latitude_;
+      longitude = station->longitude_;
       to_return = it->second;
     }
   }
   return to_return;
 }
 
-Graph::VertexData * Graph::southeastMost() {
+Graph::VertexData* Graph::getSoutheastMost() {
   std::map<int, VertexData*>::iterator it;
-  int lat = INT_MAX;
-  int longi = -1;
+  int latitude = INT_MAX;
+  int longitude = -1;
 
-  Graph::VertexData * to_return;
+  Graph::VertexData* to_return;
   //southeast most means that the latitude is the smallest and the longitude is the greatest     
-  for (it = vertexes_.begin(); it != vertexes_.end(); it++) {
-    Graph::Station * station = &it->second->station_;
-    if (station->latitude_ <= lat && station->longitude_ >= longi) {
-      lat = station->latitude_;
-      longi = station->longitude_;
+  for (it = verticies_.begin(); it != verticies_.end(); it++) {
+    Graph::Station* station = &it->second->station_;
+    if (station->latitude_ <= latitude && station->longitude_ >= longitude) {
+      latitude = station->latitude_;
+      longitude = station->longitude_;
       to_return = it->second;
     }
   }

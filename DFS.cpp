@@ -6,16 +6,16 @@ DFS::DFS(Graph* graph, Graph::VertexData* first_vertex) {
 
   // set all verticies as unexplored
   for (std::pair<int, Graph::VertexData*> vertex : vertex_map_) {
-    vertex.second->label = Graph::kUnexplored;
+    vertex.second->label_ = Graph::kUnexplored;
   }
 
   std::list<Graph::Edge*> edges = graph_->getEdgeList();
   // set all edges as unexplored
   for (Graph::Edge* edge : edges) {
-    edge->label = Graph::kUnexplored;
+    edge->label_ = Graph::kUnexplored;
   }
   // mark the starting vertex as visited and add it to the stack
-  first_vertex->label = Graph::kVisited;
+  first_vertex->label_ = Graph::kVisited;
   stack_.push(first_vertex);
   index_in_map_ = 1;
   num_connected_components = 1;
@@ -42,13 +42,13 @@ DFS::Iterator& DFS::Iterator::operator++() {
     } else {
       other_vertex = edge->end_vertex_;
     }
-    if (other_vertex->label == Graph::kUnexplored) {
-      other_vertex->label = Graph::kVisited;
-      edge->label = Graph::kDiscovery;
+    if (other_vertex->label_ == Graph::kUnexplored) {
+      other_vertex->label_ = Graph::kVisited;
+      edge->label_ = Graph::kDiscovery;
       dfs_->add(other_vertex);
 
-    } else if (edge->label == Graph::kUnexplored) {
-      edge->label = Graph::kBack;
+    } else if (edge->label_ == Graph::kUnexplored) {
+      edge->label_ = Graph::kBack;
     }
   }
   return *this;
@@ -66,8 +66,8 @@ void DFS::checkVerticiesAllExplored() {
     return;
   }
  for (auto it = vertex_map_.begin(); it != vertex_map_.end(); ++it) {
-    if ((*it).second->label == Graph::kUnexplored) {
-      (*it).second->label = Graph::kVisited;
+    if ((*it).second->label_ == Graph::kUnexplored) {
+      (*it).second->label_ = Graph::kVisited;
        stack_.push((*it).second);
        index_in_map_ += 1;
        num_connected_components += 1;

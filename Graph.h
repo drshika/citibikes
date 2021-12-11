@@ -31,6 +31,9 @@ public:
   struct Edge;
   struct VertexData;
 
+  /**
+   * This struct provides the comparison for the boost fibonacci heap
+   */
   struct compareVertex {
     bool operator() (VertexData* vertex_one, VertexData* vertex_two) const {
       return vertex_one->distance_ >= vertex_two->distance_;
@@ -77,7 +80,7 @@ public:
     std::list<Edge*> adjacent_edges_;
 
     // Optional label for use in Graph Traversals (default is Unexplored)
-    Label label = kUnexplored;
+    Label label_ = kUnexplored;
 
     // Optional double for use in Dijkstra's to track distance
     double distance_ = std::numeric_limits<double>::infinity();
@@ -93,12 +96,17 @@ public:
       adjacent_edges_ = adjacent_edges;
     }
 
+    /**
+     * Checks if the given Vertex is Adjacent to this Vertex
+     *
+     * @param other_vertex VertexData* of the Vertex to check
+     * @return bool that is true if the given vertex is adjacent to this vertex
+     */
     bool isAdjacentVertex(VertexData* other_vertex) const;
 
+    // Allows for easy updates to the boost fibonacci heap
     boost::heap::fibonacci_heap<VertexData*, boost::heap::compare<compareVertex>>::handle_type handle;
   };
-
-  void printGraph(Graph g);
 
   /**
    * Struct representing an Edge in the Graph
@@ -110,7 +118,7 @@ public:
     VertexData* end_vertex_;
 
     // Optional label for use in Graph Traversals (default is Unexplored)
-    Label label = kUnexplored;
+    Label label_ = kUnexplored;
 
     /**
      * Constructor
@@ -136,8 +144,22 @@ public:
           ||((start_vertex_->station_.id_ == rhs.end_vertex_->station_.id_) && (end_vertex_->station_.id_ == rhs.start_vertex_->station_.id_));
     }
 
+    /**
+     * Gets the Vertex at the other end of the edge from the given vertex
+     *
+     * WARNING: If the given vertex is not an endpoint of the edge, this 
+     *    function will return the start_vertex_ value
+     *
+     * @param VertexData* of the vertex of the edge to not be returned
+     * @return the vertex at the other end of the edge from the given vertex
+     */
     VertexData* getOtherVertex(VertexData* vertex) const;
 
+    /**
+     * Gets the distance between the verticies at the end of each edge
+     *
+     * @return the distance between the verticies at the end of each edge
+     */
     double getEdgeDistance() const;
   };
 
@@ -190,6 +212,11 @@ public:
    */
   void insertEdge(VertexData* vertex_one, VertexData* vertex_two);
 
+  /**
+   * Removes the given vertex from the graph
+   *
+   * @param to_remove a vertex to remove from the graph
+   */
   void removeVertex(VertexData* to_remove);
 
   /**
@@ -221,6 +248,11 @@ public:
    */
   std::list<Edge*> getEdgeList() const;
 
+  /**
+   * Retrives the combined distance of all edges in the graph
+   *
+   * @return the combinded distance of all edges in the graph
+   */
   double getTotalDistance() const;
 
   /**
@@ -237,16 +269,51 @@ public:
    */
   int isEulerian(); 
 
+  /**
+   * Finds the minimum spanning tree of the Graph using Dijkstras Algorithm
+   *
+   * @param starting_vertex a pointer to the vertex to start Dijkstra's from
+   * @return a Graph representing the MST produced by running Dijkstras from the 
+   *    given vertex
+   */
   Graph Dijkstras(VertexData* starting_vertex);
 
+  /**
+   * Find the largest (most distance covered) hamiltonian cycle in the graph
+   *
+   * @return a Graph representing the largest Hamiltonian Cycle in the graph
+   */
   Graph* getLargestHamiltonianCycle();
 
+  /**
+   * Updates the Largest Hamiltonian Cycle if the given graph is larger (covers
+   * more distance)
+   *
+   * @param to_check Graph* to check if it is larger than the current largest
+   *    Hamiltonian Cycle
+   */
   void updateLargestHamiltonain(Graph* to_check);
-
+  
+  /**
+   * Helper Function for Largest Hamiltonian Cycle 
+   * 
+   * @param current_hamiltonian_vertex a VertexData* representing the current vertex in
+   *    the hamiltonian cycle
+   * @param hamiltonian a Graph storing the hamiltonian cycle
+   * @param current_graph_vertex a VertexData* representing the current vertex in the graph
+   * @param start_vertex a VertexData* representing the starting vertex in the graph
+   * @param hamiltonian_start a VertexData* representing the starting vertex in the 
+   *    hamiltonian cycle
+   */
   void getHamiltonianCycle(Graph::VertexData* current_hamiltonian_vertex, Graph* hamiltonian, 
       Graph::VertexData* current_graph_vertex, Graph::VertexData* start_vertex,
       Graph::VertexData* hamiltonian_start);
 
+  /**
+   * Retrieves the number of verticies in the graph
+   *
+   * @return a size_t representing the number of verticies in the graph
+   */
   size_t size() const;
 
   /**
@@ -254,14 +321,14 @@ public:
    * 
    * @return a vertex largest latitude and smallest longitude
    */
-  VertexData* northwestMost();
+  VertexData* getNorthwestMost();
 
   /**
    * Helper to return the southeast most station on the map
    * 
    * @return a vertex with the smallest latitude and largest longitude
    */
-  VertexData* southeastMost();
+  VertexData* getSoutheastMost();
 
 
 private:
@@ -270,16 +337,16 @@ private:
    * Key: int representing a station id
    * Value: Vertex corresponding to the station with the given station id
    */
-  std::map<int, VertexData*> vertexes_;
+  std::map<int, VertexData*> verticies_;
 
   /**
    * List of Pointers to all the edges in the graph
    */
   std::list<Edge*> edges_;
 
+  // Graph to store the largest hamiltonian cycle in the graph
   Graph* largest_hamiltonian_ = nullptr;
+
   // variable to keep track of the total distance (weight of all graph edges combined)
   double total_distance_ = 0;
-
-  double getEdgeDistance(Edge* edge) const;
 };
